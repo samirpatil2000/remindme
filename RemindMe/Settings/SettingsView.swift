@@ -101,33 +101,6 @@ public struct SettingsView: View {
     
     public var body: some View {
         Form {
-            // Fix 3 — Permissions banner ABOVE General section, styled amber
-            if !PermissionsManager.isAccessibilityGranted() {
-                HStack(spacing: 10) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.orange)
-                        .font(.system(size: 18))
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Accessibility access required")
-                            .font(.headline)
-                        Text("The global hotkey won't work until access is granted.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Button("Grant Access") {
-                        PermissionsManager.requestAccessibility()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.orange)
-                }
-                .padding(12)
-                .background(Color.orange.opacity(0.1))
-                .cornerRadius(10)
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.orange.opacity(0.35), lineWidth: 0.5))
-                .padding(.bottom, 8)
-            }
-            
             // Fix 4 — GroupBox with uppercase caption label
             Section(header: Text("General")) {
                 GroupBox(label: Text("GENERAL").font(.caption2).foregroundStyle(.secondary)) {

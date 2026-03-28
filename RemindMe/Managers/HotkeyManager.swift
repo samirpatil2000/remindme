@@ -125,7 +125,8 @@ public class HotkeyManager {
             
             if status != noErr {
                 // Likely running in a unit-test process without a real event loop.
-                // Silently skip — the hotkey just won't fire.
+                // Surface the failure so we can distinguish runtime conflicts from no-op behavior.
+                print("Failed to install hotkey event handler: \(status)")
                 return
             }
             HotkeyManager.eventHandlerInstalled = true
@@ -147,8 +148,7 @@ public class HotkeyManager {
         )
         
         if registerStatus != noErr {
-            // Non-fatal — in test environments or when accessibility is denied
-            // the registration will fail silently.
+            print("Failed to register hotkey \(shortcut.displayString): \(registerStatus)")
         }
     }
     

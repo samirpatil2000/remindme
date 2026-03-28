@@ -35,14 +35,13 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             self?.commandWindowController.showWindow()
         }
         
-        // Register the saved (or default) shortcut
-        if PermissionsManager.isAccessibilityGranted() {
-            if let data = UserDefaults.standard.data(forKey: "globalShortcutData"),
-               let shortcut = try? JSONDecoder().decode(Shortcut.self, from: data) {
-                updateHotkey(shortcut: shortcut)
-            } else {
-                updateHotkey(shortcut: .defaultShortcut)
-            }
+        // Register the saved shortcut on launch. Carbon hotkeys should not depend
+        // on Accessibility permission the way global event taps do.
+        if let data = UserDefaults.standard.data(forKey: "globalShortcutData"),
+           let shortcut = try? JSONDecoder().decode(Shortcut.self, from: data) {
+            updateHotkey(shortcut: shortcut)
+        } else {
+            updateHotkey(shortcut: .defaultShortcut)
         }
         
         // Listen for hotkey changes from Settings

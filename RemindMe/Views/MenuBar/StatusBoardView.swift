@@ -13,84 +13,120 @@ public struct StatusBoardView: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 0) {
             headerView
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
             
             Divider()
             
-            if activeAndPastDueTasks.isEmpty {
-                Text("Nothing running")
-                    .font(.body)
-                    .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.vertical, 8)
-            } else {
-                ForEach(activeAndPastDueTasks) { task in
-                    TaskRowView(task: task, store: taskStore)
-                }
-            }
-            
-            if taskStore.completedToday > 0 {
-                Divider()
-                DisclosureGroup(isExpanded: $showCompleted) {
-                    let doneToday = taskStore.tasks.filter { task in
-                        task.state == .done && Calendar.current.isDate(task.createdAt, inSameDayAs: taskStore.now())
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        ForEach(doneToday) { task in
-                            Text(task.title)
-                                .font(.body)
+            ScrollView {
+                VStack(spacing: 8) {
+                    if activeAndPastDueTasks.isEmpty {
+                        VStack(spacing: 12) {
+                            Image(systemName: "clock.badge.checkmark")
+                                .font(.system(size: 32, weight: .light))
+                                .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                            Text("All clear")
+                                .font(.body.weight(.medium))
                                 .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                                .strikethrough()
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 32)
+                    } else {
+                        ForEach(activeAndPastDueTasks) { task in
+                            TaskRowView(task: task, store: taskStore)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 4)
                         }
                     }
-                    .padding(.top, 4)
-                } label: {
-                    Text("\(taskStore.completedToday) completed today")
-                        .font(.body)
-                        .foregroundStyle(Color(nsColor: .labelColor))
+                    
+                    if taskStore.completedToday > 0 {
+                        Divider()
+                            .padding(.top, 4)
+                        
+                        DisclosureGroup(isExpanded: $showCompleted) {
+                            let doneToday = taskStore.tasks.filter { task in
+                                task.state == .done && Calendar.current.isDate(task.createdAt, inSameDayAs: taskStore.now())
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                ForEach(doneToday) { task in
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundStyle(Color.green.opacity(0.8))
+                                            .font(.system(size: 12))
+                                        Text(task.title)
+                                            .font(.body)
+                                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                            .strikethrough()
+                                    }
+                                }
+                            }
+                            .padding(.top, 8)
+                            .padding(.bottom, 4)
+                            .padding(.leading, 4)
+                        } label: {
+                            Text("\(taskStore.completedToday) completed today")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                        }
+                        .accentColor(Color(nsColor: .secondaryLabelColor))
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
                 }
+                .padding(.vertical, 12)
             }
         }
-        .padding()
-        .frame(width: 320)
+        .frame(width: 340, height: activeAndPastDueTasks.isEmpty && taskStore.completedToday == 0 ? 180 : 400, alignment: .top)
     }
     
     private var headerView: some View {
-        HStack {
-            Group {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 2) {
                 let count = taskStore.activeTasks.count
                 if count == 0 {
-                    Text("0 running")
-                        .font(.headline)
+                    Text("RemindMe")
+                        .font(.title3.weight(.bold))
+                    Text("Ready")
+                        .font(.subheadline)
+                        .foregroundStyle(Color(nsColor: .secondaryLabelColor))
                 } else {
+                    Text("\(count) Running")
+                        .font(.title3.weight(.bold))
+                    
                     let nextTask = taskStore.activeTasks.min(by: { $0.reminderFiresAt < $1.reminderFiresAt })!
                     let timeString = formatNextTime(nextTask.reminderFiresAt, now: taskStore.now())
-                    Text("⏱ \(count) running — next in \(timeString)")
-                        .font(.headline)
+                    Text("Next in \(timeString)")
+                        .font(.subheadline)
+                        .foregroundStyle(Color(nsColor: .secondaryLabelColor))
                 }
             }
-            Spacer()
-            Button {
-                NotificationCenter.default.post(name: NSNotification.Name("ShowSettingsWindow"), object: nil)
-            } label: {
-                Image(systemName: "gear")
-                    .font(.body.weight(.bold))
-                    .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-            }
-            .buttonStyle(.plain)
-            .help("Settings")
             
-            Button {
-                NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindow"), object: nil)
-            } label: {
-                Image(systemName: "plus")
-                    .font(.body.weight(.bold))
-                    .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+            Spacer()
+            
+            HStack(spacing: 14) {
+                Button {
+                    NotificationCenter.default.post(name: NSNotification.Name("ShowSettingsWindow"), object: nil)
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                }
+                .buttonStyle(.plain)
+                .help("Settings")
+                
+                Button {
+                    NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindow"), object: nil)
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundStyle(Color(nsColor: .controlAccentColor))
+                }
+                .buttonStyle(.plain)
+                .help("Add task")
             }
-            .buttonStyle(.plain)
-            .help("Add new task")
         }
     }
     
@@ -111,38 +147,50 @@ public struct TaskRowView: View {
     
     public var body: some View {
         TimelineView(.periodic(from: Date(), by: 1.0)) { context in
-            HStack {
+            HStack(spacing: 12) {
+                // Status Dot
+                Circle()
+                    .fill(task.state == .pastDue ? Color.orange : Color.green)
+                    .frame(width: 8, height: 8)
+                
                 Text(task.title)
-                    .font(.headline)
+                    .font(.body.weight(.medium))
                     .foregroundStyle(Color(nsColor: .labelColor))
                     .lineLimit(1)
                 
-                Spacer()
+                Spacer(minLength: 16)
                 
                 if isHovering {
-                    HStack(spacing: 8) {
-                        Button("Still Running") {
+                    HStack(spacing: 12) {
+                        Button {
                             store.markStillRunning(id: task.id, newFiresAt: store.now().addingTimeInterval(600))
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(Color(nsColor: .controlAccentColor))
+                        .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                        .help("Still Running (10m)")
                         
-                        Button("Done") {
+                        Button {
                             store.markDone(id: task.id)
+                        } label: {
+                            Image(systemName: "checkmark")
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(Color(nsColor: .controlAccentColor))
+                        .foregroundStyle(Color.green)
+                        .help("Done")
                     }
-                    .font(.body)
                 } else {
                     Text(timeText(for: task, now: context.date))
-                        .font(.subheadline)
+                        .font(.system(.subheadline, design: .monospaced))
                         .foregroundStyle(colorForTime(task))
                 }
             }
             .contentShape(Rectangle()) 
             .onHover { hover in
-                isHovering = hover
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    isHovering = hover
+                }
             }
             .contextMenu {
                 Button("Delete") {

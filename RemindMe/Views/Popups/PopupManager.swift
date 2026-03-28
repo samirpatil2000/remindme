@@ -34,8 +34,8 @@ public class PopupManager: ObservableObject {
     public var onOpenMenuBar: (() -> Void)?
     
     private let maxVisible = 3
-    private let cardWidth: CGFloat = 320
-    private let cardHeight: CGFloat = 140
+    private let cardWidth: CGFloat = 360
+    private let cardHeight: CGFloat = 160
     private let stackGap: CGFloat = 8
     private let screenEdgePadding: CGFloat = 16
     

@@ -1,0 +1,78 @@
+# Xcode
+#
+# gitignore contributors: any person who granted a public domain dedication of their
+# contribution to this file, as well as those (including but not limited to
+# Google Inc.) who have contributed to this file.
+
+## Build results
+build/
+.build/
+DerivedData/
+.swiftpm/
+
+## Various settings
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+
+## Other
+*.tmp
+*.moved-aside
+*.xcuserstate
+
+## Obj-C/Swift specific
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+#
+# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
+# .build/
+
+# User-specific
+*.xcuserdatad
+
+# CocoaPods
+#
+# We recommend against adding the Pods directory to your .gitignore. However
+# you should do what's best for your development team.
+# Pods/
+
+# Carthage
+#
+# Add this line to avoid checking in dependencies from Carthage.
+# Carthage/Build
+
+# AccuRev
+.accurev.session
+
+# Fastlane
+#
+# It is recommended to not store the screenshots in the repo since they will
+# occupy large amount of space and binary files are not well handled by git.
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Code Injection
+#
+# After running once, Code Injection creates a derived data folder.
+.injection/
+
+# macOS
+#
+# It is recommended to not store .DS_Store files in the repo.
+.DS_Store

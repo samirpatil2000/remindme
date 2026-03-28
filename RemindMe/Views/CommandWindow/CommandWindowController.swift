@@ -17,7 +17,7 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     
     public init() {
         let panel = CommandPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 80),
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 72),
             styleMask: [.nonactivatingPanel, .fullSizeContentView, .borderless],
             backing: .buffered,
             defer: false
@@ -34,11 +34,11 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         panel.windowController = self
         
         let visualEffect = NSVisualEffectView()
-        visualEffect.material = .popover
+        visualEffect.material = .hudWindow
         visualEffect.state = .active
         visualEffect.blendingMode = .behindWindow
         visualEffect.wantsLayer = true
-        visualEffect.layer?.cornerRadius = 12
+        visualEffect.layer?.cornerRadius = 14
         visualEffect.layer?.masksToBounds = true
         
         panel.contentView = visualEffect
@@ -71,7 +71,15 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     public func showWindow() {
         guard let window = self.window, !isAnimating else { return }
         
-        window.center()
+        if let screen = NSScreen.main {
+            let x = screen.visibleFrame.midX - (560 / 2)
+            // Golden ratio-ish: position slightly above center
+            let y = screen.visibleFrame.midY + (screen.visibleFrame.height * 0.15)
+            window.setFrame(NSRect(x: x, y: y, width: 560, height: 72), display: true)
+        } else {
+            window.center()
+        }
+        
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         

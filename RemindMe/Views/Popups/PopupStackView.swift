@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct PopupStackView: View {
     public let title: String
+    public let firedAt: Date = Date()
     public let onDone: () -> Void
     public let onSnooze: () -> Void
     public let onStillRunning: () -> Void
@@ -14,31 +15,80 @@ public struct PopupStackView: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                Image(systemName: "stopwatch")
-                    .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(Color(nsColor: .labelColor))
-                    .lineLimit(1)
-            }
+        HStack(spacing: 0) {
+            // Accent Bar
+            Rectangle()
+                .fill(Color(nsColor: .controlAccentColor))
+                .frame(width: 4)
             
-            Text("Reminder fired")
-                .font(.subheadline)
-                .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-            
-            HStack {
-                Button("Done", action: onDone)
-                Button("Snooze 5m", action: onSnooze)
-                Button("Still Running", action: onStillRunning)
+            VStack(alignment: .leading, spacing: 12) {
+                // Header Region
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(Color(nsColor: .labelColor))
+                        .lineLimit(1)
+                    
+                    TimelineView(.periodic(from: Date(), by: 1.0)) { context in
+                        Text(timeAgoString(from: firedAt, to: context.date))
+                            .font(.subheadline)
+                            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                    }
+                }
+                
+                // Actions Region
+                HStack(spacing: 8) {
+                    Button(action: onDone) {
+                        Label("Done", systemImage: "checkmark")
+                            .font(.body.weight(.medium))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color(nsColor: .controlAccentColor))
+                            .foregroundStyle(.white)
+                            .cornerRadius(16)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button(action: onSnooze) {
+                        Label("Snooze", systemImage: "moon.fill")
+                            .font(.body.weight(.medium))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color(nsColor: .controlAccentColor).opacity(0.15))
+                            .foregroundStyle(Color(nsColor: .controlAccentColor))
+                            .cornerRadius(16)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button(action: onStillRunning) {
+                        Text("Still Running")
+                            .font(.body)
+                            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                            .underline()
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.leading, 4)
+                }
+                .padding(.top, 4)
             }
-            .font(.body)
-            .tint(Color(nsColor: .controlAccentColor))
-            .padding(.top, 4)
+            .padding(20)
+            
+            Spacer(minLength: 0)
         }
-        .padding(16)
-        .frame(width: 320)
+        .frame(width: 360)
+        .background(Color.clear)
+    }
+    
+    private func timeAgoString(from date: Date, to now: Date) -> String {
+        let diff = Int(now.timeIntervalSince(date))
+        if diff < 60 {
+            return "Fired just now"
+        }
+        let mins = diff / 60
+        if mins < 60 {
+            return "Fired \(mins)m ago"
+        }
+        return "Fired \(mins / 60)h \(mins % 60)m ago"
     }
 }
 
@@ -53,13 +103,13 @@ public struct MoreIndicatorView: View {
     
     public var body: some View {
         Button(action: onClick) {
-            Text("+\(count) more")
-                .font(.subheadline)
-                .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                .padding(8)
+            Label("+\(count) more pending", systemImage: "tray.full.fill")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(Color(nsColor: .labelColor))
+                .padding(12)
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
-        .frame(width: 320)
+        .frame(width: 360)
     }
 }

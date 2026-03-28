@@ -53,6 +53,10 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
         }
         
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("ClosePopoverOnly"), object: nil, queue: .main) { [weak self] _ in
+            self?.menuBarController.closePopover(nil)
+        }
+        
         startTaskTimer()
     }
     

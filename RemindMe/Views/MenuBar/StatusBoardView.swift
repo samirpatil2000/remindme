@@ -107,15 +107,28 @@ public struct StatusBoardView: View {
             Spacer()
             
             HStack(spacing: 14) {
-                Button {
-                    NotificationCenter.default.post(name: NSNotification.Name("ShowSettingsWindow"), object: nil)
-                } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 15))
-                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                if #available(macOS 14.0, *) {
+                    SettingsLink {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 15))
+                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                    }
+                    .buttonStyle(.plain)
+                    .help("Settings")
+                    .simultaneousGesture(TapGesture().onEnded {
+                        NotificationCenter.default.post(name: NSNotification.Name("ClosePopoverOnly"), object: nil)
+                    })
+                } else {
+                    Button {
+                        NotificationCenter.default.post(name: NSNotification.Name("ShowSettingsWindow"), object: nil)
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 15))
+                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                    }
+                    .buttonStyle(.plain)
+                    .help("Settings")
                 }
-                .buttonStyle(.plain)
-                .help("Settings")
                 
                 Button {
                     NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindow"), object: nil)

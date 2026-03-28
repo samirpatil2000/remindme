@@ -1,0 +1,40 @@
+{
+  "": {
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/master.swiftdeps"
+  },
+  "/Users/samirpatil/Desktop/remindme/RemindMeTests/HotkeyManagerTests.swift": {
+    "dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests.d",
+    "object": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests.swift.o",
+    "swiftmodule": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests.swiftdeps",
+    "diagnostics": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests.dia"
+  },
+  "/Users/samirpatil/Desktop/remindme/RemindMeTests/ParserTests.swift": {
+    "dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests.d",
+    "object": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests.swift.o",
+    "swiftmodule": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests.swiftdeps",
+    "diagnostics": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests.dia"
+  },
+  "/Users/samirpatil/Desktop/remindme/RemindMeTests/PopupManagerTests.swift": {
+    "dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests.d",
+    "object": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests.swift.o",
+    "swiftmodule": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests.swiftdeps",
+    "diagnostics": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests.dia"
+  },
+  "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStateTests.swift": {
+    "dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests.d",
+    "object": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests.swift.o",
+    "swiftmodule": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests.swiftdeps",
+    "diagnostics": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests.dia"
+  },
+  "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStoreTests.swift": {
+    "dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests.d",
+    "object": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests.swift.o",
+    "swiftmodule": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests.swiftdeps",
+    "diagnostics": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests.dia"
+  }
+}

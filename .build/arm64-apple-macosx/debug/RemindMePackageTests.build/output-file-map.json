@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/master.swiftdeps"
+  },
+  "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.derived/runner.swift": {
+    "dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner.d",
+    "object": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner.dia"
+  }
+}

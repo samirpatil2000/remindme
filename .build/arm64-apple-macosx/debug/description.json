@@ -1,0 +1,1144 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.xctest/Contents/MacOS/RemindMePackageTests",
+      "packagePath" : "/Users/samirpatil/Desktop/remindme",
+      "productName" : "RemindMePackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.RemindMe-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/sources",
+      "importPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/App/AppDelegate.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/App/RemindMeApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/HotkeyManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/NotificationManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/PermissionsManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Models/Task.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/ReminderParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/TimeToken.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Settings/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Utils/Extensions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/MenuBarController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/StatusBoardView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupStackView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "RemindMe",
+      "moduleOutputPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules/RemindMe.swiftmodule",
+      "objects" : [
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/AppDelegate.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/RemindMeApp.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/HotkeyManager.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/NotificationManager.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PermissionsManager.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Task.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskState.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskStore.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/ReminderParser.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TimeToken.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/SettingsView.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Extensions.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowController.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowView.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/MenuBarController.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/StatusBoardView.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupCard.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupManager.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupStackView.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx13.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "RemindMe_main",
+        "-color-diagnostics",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g"
+      ],
+      "outputFileMapPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/AppDelegate.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/RemindMeApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/HotkeyManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/NotificationManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PermissionsManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Task.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/ReminderParser.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TimeToken.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Extensions.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/MenuBarController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/StatusBoardView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupStackView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules/RemindMe.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/samirpatil/Desktop/remindme/RemindMe/App/AppDelegate.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/App/RemindMeApp.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/HotkeyManager.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/NotificationManager.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/PermissionsManager.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Models/Task.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskState.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskStore.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/ReminderParser.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/TimeToken.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Settings/SettingsView.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Utils/Extensions.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowController.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowView.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/MenuBarController.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/StatusBoardView.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupCard.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupManager.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupStackView.swift"
+      ],
+      "tempsPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.RemindMePackageTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/sources",
+      "importPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules/RemindMeTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "RemindMePackageTests",
+      "moduleOutputPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules/RemindMePackageTests.swiftmodule",
+      "objects" : [
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx13.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/include/RemindMePackageTests-Swift.h",
+        "-color-diagnostics",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g"
+      ],
+      "outputFileMapPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules/RemindMePackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.RemindMeTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/sources",
+      "importPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/HotkeyManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/ParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/PopupManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStateTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStoreTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "RemindMeTests",
+      "moduleOutputPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules/RemindMeTests.swiftmodule",
+      "objects" : [
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests.swift.o",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-color-diagnostics",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g"
+      ],
+      "outputFileMapPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules/RemindMeTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/samirpatil/Desktop/remindme/RemindMeTests/HotkeyManagerTests.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMeTests/ParserTests.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMeTests/PopupManagerTests.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStateTests.swift",
+        "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStoreTests.swift"
+      ],
+      "tempsPath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "RemindMe" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "RemindMe",
+      "-c",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/App/AppDelegate.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/App/RemindMeApp.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/HotkeyManager.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/NotificationManager.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/PermissionsManager.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Models/Task.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskState.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskStore.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/ReminderParser.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/TimeToken.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Settings/SettingsView.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Utils/Extensions.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowController.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowView.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/MenuBarController.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/StatusBoardView.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupCard.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupManager.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupStackView.swift",
+      "-I",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx13.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "RemindMe_main",
+      "-color-diagnostics",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "RemindMePackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "RemindMePackageTests",
+      "-c",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.derived/runner.swift",
+      "-I",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx13.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/include/RemindMePackageTests-Swift.h",
+      "-color-diagnostics",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "RemindMeTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "RemindMeTests",
+      "-c",
+      "/Users/samirpatil/Desktop/remindme/RemindMeTests/HotkeyManagerTests.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMeTests/ParserTests.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMeTests/PopupManagerTests.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStateTests.swift",
+      "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStoreTests.swift",
+      "-I",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-color-diagnostics",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "RemindMe" : [
+
+    ],
+    "RemindMePackageTests" : [
+      "RemindMeTests",
+      "RemindMe"
+    ],
+    "RemindMeTests" : [
+      "RemindMe"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe-entitlement.plist" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<entitlement-plist>"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<com.apple.security.get-task-allow>"
+        }
+      ],
+      "outputFilePath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe-entitlement.plist"
+    },
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/App/AppDelegate.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/App/RemindMeApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/HotkeyManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/NotificationManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Managers/PermissionsManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Models/Task.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Models/TaskStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/ReminderParser.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Parser/TimeToken.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Settings/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Utils/Extensions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/CommandWindow/CommandWindowView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/MenuBarController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/MenuBar/StatusBoardView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMe/Views/Popups/PopupStackView.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/sources"
+    },
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/AppDelegate.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Extensions.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/HotkeyManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/MenuBarController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/NotificationManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PermissionsManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupStackView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/RemindMeApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/ReminderParser.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/StatusBoardView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Task.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TimeToken.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.product/Objects.LinkFileList"
+    },
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/sources"
+    },
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/AppDelegate.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/CommandWindowView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Extensions.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/HotkeyManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/MenuBarController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/NotificationManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PermissionsManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/PopupStackView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/RemindMeApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/ReminderParser.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/StatusBoardView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/Task.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TaskStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMe.build/TimeToken.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/HotkeyManagerTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/ParserTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/PopupManagerTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStateTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/TaskStoreTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMePackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/HotkeyManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/ParserTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/PopupManagerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStateTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/samirpatil/Desktop/remindme/RemindMeTests/TaskStoreTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/RemindMeTests.build/sources"
+    },
+    "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/samirpatil/Desktop/remindme/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

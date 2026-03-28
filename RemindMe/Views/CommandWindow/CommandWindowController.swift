@@ -115,4 +115,33 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     public func windowDidResignKey(_ notification: Notification) {
         hideWindow()
     }
+    
+    public func updateShortcutHint(with shortcut: Shortcut) {
+        let text = shortcutString(from: shortcut)
+        let swiftUIView = CommandWindowView(shortcutHint: text) { [weak self] text in
+            self?.onParseText?(text)
+        } onEscape: { [weak self] in
+            self?.hideWindow()
+        }
+        if let visualEffect = self.window?.contentView as? NSVisualEffectView,
+           let host = visualEffect.subviews.first(where: { $0 is NSHostingView<CommandWindowView> }) as? NSHostingView<CommandWindowView> {
+            host.rootView = swiftUIView
+        }
+    }
+    
+    public func shortcutString(from shortcut: Shortcut) -> String {
+        var parts: [String] = []
+        let flags = NSEvent.ModifierFlags(rawValue: shortcut.modifiers)
+        if flags.contains(.control) { parts.append("⌃") }
+        if flags.contains(.option) { parts.append("⌥") }
+        if flags.contains(.shift) { parts.append("⇧") }
+        if flags.contains(.command) { parts.append("⌘") }
+        
+        if shortcut.keyCode == 49 { parts.append("Space") }
+        else if shortcut.keyCode == 36 { parts.append("Return") }
+        else if shortcut.keyCode == 53 { parts.append("Esc") }
+        else { parts.append("Key \(shortcut.keyCode)") }
+        
+        return parts.joined(separator: " ")
+    }
 }

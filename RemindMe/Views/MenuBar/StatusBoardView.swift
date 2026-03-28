@@ -102,6 +102,10 @@ public struct StatusBoardView: View {
                         .font(.subheadline)
                         .foregroundStyle(Color(nsColor: .secondaryLabelColor))
                 }
+                
+                let total = taskStore.tasks.filter { Calendar.current.isDate($0.createdAt, inSameDayAs: taskStore.now()) }.count
+                let progress = total > 0 ? Double(taskStore.completedToday) / Double(total) : 0.0
+                ProgressView(value: progress).progressViewStyle(.linear).tint(.green).frame(height: 2).padding(.top, 6)
             }
             
             Spacer()
@@ -175,6 +179,15 @@ public struct TaskRowView: View {
                 
                 if isHovering {
                     HStack(spacing: 12) {
+                        Button {
+                            store.markStillRunning(id: task.id, newFiresAt: store.now().addingTimeInterval(300))
+                        } label: {
+                            Image(systemName: "moon.fill")
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.secondary)
+                        .help("Snooze 5m")
+                        
                         Button {
                             store.markStillRunning(id: task.id, newFiresAt: store.now().addingTimeInterval(600))
                         } label: {

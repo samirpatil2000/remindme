@@ -112,8 +112,8 @@ public class PopupManager: ObservableObject {
             onDone: { [weak self] in
                 self?.handleAction(.done, for: taskID)
             },
-            onSnooze: { [weak self] in
-                self?.handleAction(.snooze(5), for: taskID)
+            onSnooze: { [weak self] mins in
+                self?.handleAction(.snooze(mins), for: taskID)
             },
             onStillRunning: { [weak self] in
                 self?.handleAction(.stillRunning, for: taskID)
@@ -126,8 +126,8 @@ public class PopupManager: ObservableObject {
         // Position at center of screen, start slightly scaled down
         guard let screen = NSScreen.main else { return }
         let screenFrame = screen.visibleFrame
-        let centerX = screenFrame.midX - (cardWidth / 2)
-        let centerY = screenFrame.midY - (cardHeight / 2)
+        let centerX = screenFrame.maxX - cardWidth - screenEdgePadding
+        let centerY = screenFrame.minY + screenEdgePadding
         
         panel.setFrame(NSRect(x: centerX, y: centerY, width: cardWidth, height: cardHeight), display: true)
         panel.alphaValue = 0
@@ -152,12 +152,12 @@ public class PopupManager: ObservableObject {
         // Calculate total stack height to center the group vertically
         let totalCards = CGFloat(visiblePopups.count)
         let totalHeight = totalCards * cardHeight + (totalCards - 1) * stackGap
-        let startY = screenFrame.midY + (totalHeight / 2)
+        let startY = screenFrame.minY + screenEdgePadding + totalHeight
         
         for (index, popup) in visiblePopups.enumerated() {
             guard let panel = popup.panel else { continue }
             
-            let targetX = screenFrame.midX - (cardWidth / 2)
+            let targetX = screenFrame.maxX - cardWidth - screenEdgePadding
             let targetY = startY - CGFloat(index + 1) * cardHeight - CGFloat(index) * stackGap
             let targetFrame = NSRect(x: targetX, y: targetY, width: cardWidth, height: cardHeight)
             

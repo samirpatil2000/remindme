@@ -95,4 +95,17 @@ final class ParserTests: XCTestCase {
         guard case .success(let payload) = result else { return XCTFail() }
         XCTAssertEqual(payload.title, "deploy v2.3")
     }
+    
+    func testWhitespaceOnlyInput() {
+        let result = parse("   ")
+        guard case .failure(let error) = result else { return XCTFail() }
+        XCTAssertEqual(error, .noTitle)
+    }
+    
+    func testFirstAtInvalidSecondAtValid() {
+        let result = parse("call @xyz @10m")
+        guard case .success(let payload) = result else { return XCTFail() }
+        XCTAssertEqual(payload.title, "call @xyz")
+        XCTAssertEqual(payload.firesAt, mockDate.addingTimeInterval(600))
+    }
 }

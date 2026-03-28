@@ -32,9 +32,9 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         if PermissionsManager.isAccessibilityGranted() {
             if let data = UserDefaults.standard.data(forKey: "globalShortcutData"),
                let shortcut = try? JSONDecoder().decode(Shortcut.self, from: data) {
-                hotkeyManager.register(shortcut: shortcut)
+                updateHotkey(shortcut: shortcut)
             } else {
-                hotkeyManager.register()
+                updateHotkey(shortcut: .defaultShortcut)
             }
         }
         
@@ -58,6 +58,11 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         startTaskTimer()
+    }
+    
+    public func updateHotkey(shortcut: Shortcut) {
+        hotkeyManager.register(shortcut: shortcut)
+        commandWindowController.updateShortcutHint(with: shortcut)
     }
     
     private func handleCommand(_ text: String) {

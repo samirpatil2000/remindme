@@ -146,4 +146,19 @@ final class PopupManagerTests: XCTestCase {
         XCTAssertEqual(popupManager.visiblePopups.count, 0)
         XCTAssertEqual(store.tasks.first(where: { $0.id == task.id })?.state, .pastDue)
     }
+    
+    func testSnoozeWithCustomDuration() {
+        let task = ReminderTask(title: "1", reminderFiresAt: store.now().addingTimeInterval(-100))
+        store.add(task: task)
+        popupManager.showPopup(for: task)
+        
+        let expectedNewFiresAt = store.now().addingTimeInterval(15 * 60)
+        popupManager.handleAction(.snooze(15), for: task.id)
+        
+        XCTAssertEqual(popupManager.visiblePopups.count, 0)
+        
+        let updatedTask = store.tasks.first(where: { $0.id == task.id })!
+        XCTAssertEqual(updatedTask.state, .stillRunning)
+        XCTAssertEqual(updatedTask.reminderFiresAt, expectedNewFiresAt)
+    }
 }

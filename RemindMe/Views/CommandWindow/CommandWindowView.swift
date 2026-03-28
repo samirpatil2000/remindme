@@ -5,10 +5,12 @@ public struct CommandWindowView: View {
     @State private var showConfirmation = false
     @State private var confirmationMessage = ""
     
+    public var shortcutHint: String
     public var onSubmit: (String) -> Void
     public var onEscape: () -> Void
     
-    public init(onSubmit: @escaping (String) -> Void, onEscape: @escaping () -> Void) {
+    public init(shortcutHint: String = "⌘ ⇧ Space", onSubmit: @escaping (String) -> Void, onEscape: @escaping () -> Void) {
+        self.shortcutHint = shortcutHint
         self.onSubmit = onSubmit
         self.onEscape = onEscape
     }
@@ -53,9 +55,10 @@ public struct CommandWindowView: View {
                     if inputText.isEmpty {
                         // Keyboard shortcut hint
                         HStack(spacing: 4) {
-                            Text("⌘")
-                            Text("⇧")
-                            Text("Space")
+                            let parts = shortcutHint.split(separator: " ")
+                            ForEach(0..<parts.count, id: \.self) { i in
+                                Text(String(parts[i]))
+                            }
                         }
                         .font(.system(size: 14, weight: .regular))
                         .foregroundStyle(Color(nsColor: .tertiaryLabelColor))

@@ -112,4 +112,17 @@ final class TaskStoreTests: XCTestCase {
         XCTAssertEqual(store.pastDueTasks.count, 1)
         XCTAssertEqual(store.pastDueTasks.first?.id, t2.id)
     }
+    
+    func testMarkFiredSetsTimestamp() {
+        let dateToInject = Date(timeIntervalSince1970: 1000)
+        store = TaskStore(defaults: userDefaults, now: { dateToInject })
+        let task = ReminderTask(title: "Test", reminderFiresAt: dateToInject.addingTimeInterval(600))
+        store.add(task: task)
+        
+        store.markFired(id: task.id)
+        
+        let updatedTask = store.tasks.first(where: { $0.id == task.id })!
+        XCTAssertTrue(updatedTask.reminderFired)
+        XCTAssertEqual(updatedTask.reminderFiredAt, dateToInject)
+    }
 }

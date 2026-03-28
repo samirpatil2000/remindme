@@ -16,7 +16,7 @@ struct RemindMeApp: App {
             }, set: { newShortcut in
                 if let encoded = try? JSONEncoder().encode(newShortcut) {
                     shortcutData = encoded
-                    appDelegate.hotkeyManager.register(shortcut: newShortcut)
+                    appDelegate.updateHotkey(shortcut: newShortcut)
                 }
             }))
         }

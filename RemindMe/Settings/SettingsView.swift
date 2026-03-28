@@ -120,45 +120,83 @@ public struct SettingsView: View {
     
     public var body: some View {
         Form {
-            Section(header: Text("General")) {
-                HStack {
-                    Text("Global Hotkey:")
-                    ShortcutRecorder(shortcut: $currentShortcut, onRecordingChanged: { rec in
-                        isRecording = rec
-                    })
-                    .frame(width: 200, height: 24)
-                }
-                
-                Stepper("Default Duration: \(defaultMinutes) minutes", value: $defaultMinutes, in: 1...120)
-                
-                Toggle("Launch at Login", isOn: Binding(get: {
-                    SMAppService.mainApp.status == .enabled
-                }, set: { newValue in
-                    if newValue {
-                        try? SMAppService.mainApp.register()
-                    } else {
-                        try? SMAppService.mainApp.unregister()
+            // Fix 3 — Permissions banner ABOVE General section, styled amber
+            if !PermissionsManager.isAccessibilityGranted() {
+                HStack(spacing: 10) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                        .font(.system(size: 18))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Accessibility access required")
+                            .font(.headline)
+                        Text("The global hotkey won't work until access is granted.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
-                }))
-                
-                Toggle("Use System Notifications", isOn: $useSystemNotifications)
+                    Spacer()
+                    Button("Grant Access") {
+                        PermissionsManager.requestAccessibility()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.orange)
+                }
+                .padding(12)
+                .background(Color.orange.opacity(0.1))
+                .cornerRadius(10)
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.orange.opacity(0.35), lineWidth: 0.5))
+                .padding(.bottom, 8)
+            }
+            
+            // Fix 4 — GroupBox with uppercase caption label
+            Section(header: Text("General")) {
+                GroupBox(label: Text("GENERAL").font(.caption2).foregroundStyle(.secondary)) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        // Fix 2 — ShortcutRecorder constrained width
+                        HStack {
+                            Text("Global hotkey")
+                            Spacer()
+                            ShortcutRecorder(shortcut: $currentShortcut, onRecordingChanged: { rec in
+                                isRecording = rec
+                            })
+                            .frame(width: 180, height: 28)
+                        }
+                        
+                        Divider()
+                        
+                        // Fix 1 — Manual HStack for Stepper
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Default reminder duration")
+                                    .font(.body)
+                                Text("\(defaultMinutes) minutes")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Stepper("", value: $defaultMinutes, in: 1...120)
+                                .labelsHidden()
+                        }
+                        
+                        Divider()
+                        
+                        Toggle("Launch at Login", isOn: Binding(get: {
+                            SMAppService.mainApp.status == .enabled
+                        }, set: { newValue in
+                            if newValue {
+                                try? SMAppService.mainApp.register()
+                            } else {
+                                try? SMAppService.mainApp.unregister()
+                            }
+                        }))
+                        
+                        Toggle("Use System Notifications", isOn: $useSystemNotifications)
+                    }
+                    .padding(8)
+                }
             }
             .padding(.bottom)
-            
-            if !PermissionsManager.isAccessibilityGranted() {
-                Section(header: Text("Permissions")) {
-                    HStack {
-                        Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.orange)
-                        Text("Accessibility access required for global hotkey")
-                        Spacer()
-                        Button("Grant Access") {
-                            PermissionsManager.requestAccessibility()
-                        }
-                    }
-                }
-            }
         }
         .padding()
-        .frame(width: 450, height: 300)
+        .frame(width: 520, height: 340)
     }
 }

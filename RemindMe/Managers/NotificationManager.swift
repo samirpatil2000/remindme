@@ -13,11 +13,15 @@ public class NotificationManager {
     public static func deliverSystemNotification(for task: ReminderTask) {
         if Bundle.main.bundleIdentifier == nil {
             // Fallback for raw executable / testing context
-            let notification = NSUserNotification()
-            notification.title = "Reminder fired"
-            notification.informativeText = task.title
-            notification.soundName = NSUserNotificationDefaultSoundName
-            NSUserNotificationCenter.default.deliver(notification)
+            let safeTitle = task.title.replacingOccurrences(of: "\"", with: "\\\"")
+            let script = "display notification \"\(safeTitle)\" with title \"Reminder fired\" sound name \"Submarine\""
+            var error: NSDictionary?
+            if let appleScript = NSAppleScript(source: script) {
+                appleScript.executeAndReturnError(&error)
+                if let error = error {
+                    print("AppleScript notification error: \(error)")
+                }
+            }
             return
         }
         

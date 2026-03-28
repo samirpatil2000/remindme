@@ -14,6 +14,7 @@ public class MenuBarController {
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "stopwatch", accessibilityDescription: "RemindMe")
             button.action = #selector(togglePopover(_:))
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
         
         popover = NSPopover()
@@ -25,6 +26,15 @@ public class MenuBarController {
     }
     
     @objc private func togglePopover(_ sender: AnyObject?) {
+        if let event = NSApp.currentEvent, event.type == .rightMouseUp || event.modifierFlags.contains(.control) {
+            let menu = NSMenu()
+            menu.addItem(withTitle: "Quit RemindMe", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+            statusItem.menu = menu
+            statusItem.button?.performClick(nil)
+            statusItem.menu = nil
+            return
+        }
+        
         if popover.isShown {
             closePopover(sender)
         } else {

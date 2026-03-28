@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 public struct StatusBoardView: View {
     @ObservedObject var taskStore: TaskStore
@@ -111,28 +112,25 @@ public struct StatusBoardView: View {
             Spacer()
             
             HStack(spacing: 14) {
-                if #available(macOS 14.0, *) {
-                    SettingsLink {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 15))
-                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
-                    }
-                    .buttonStyle(.plain)
-                    .help("Settings")
-                    .simultaneousGesture(TapGesture().onEnded {
-                        NotificationCenter.default.post(name: NSNotification.Name("ClosePopoverOnly"), object: nil)
-                    })
-                } else {
-                    Button {
-                        NotificationCenter.default.post(name: NSNotification.Name("ShowSettingsWindow"), object: nil)
-                    } label: {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 15))
-                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
-                    }
-                    .buttonStyle(.plain)
-                    .help("Settings")
+                SettingsLink {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
                 }
+                .buttonStyle(.plain)
+                .help("Settings")
+                .simultaneousGesture(TapGesture().onEnded {
+                    NSApp.activate(ignoringOtherApps: true)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        NotificationCenter.default.post(name: NSNotification.Name("ClosePopoverOnly"), object: nil)
+                        
+                        for window in NSApp.windows where window.canBecomeMain {
+                            window.makeKeyAndOrderFront(nil)
+                            window.orderFrontRegardless()
+                        }
+                    }
+                })
                 
                 Button {
                     NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindow"), object: nil)

@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 
+@MainActor
 public class MenuBarController {
     private var statusItem: NSStatusItem
     private var popover: NSPopover

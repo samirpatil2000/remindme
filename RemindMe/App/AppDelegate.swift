@@ -1,5 +1,6 @@
 import AppKit
 
+@MainActor
 public class AppDelegate: NSObject, NSApplicationDelegate {
     public var taskStore: TaskStore!
     public var menuBarController: MenuBarController!
@@ -29,6 +30,12 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             self?.menuBarController.showPopover(nil)
         }
         
+        // Wire up hotkey callback
+        hotkeyManager.onHotkeyPressed = { [weak self] in
+            self?.commandWindowController.showWindow()
+        }
+        
+        // Register the saved (or default) shortcut
         if PermissionsManager.isAccessibilityGranted() {
             if let data = UserDefaults.standard.data(forKey: "globalShortcutData"),
                let shortcut = try? JSONDecoder().decode(Shortcut.self, from: data) {
@@ -38,26 +45,34 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         
-        hotkeyManager.onHotkeyPressed = { [weak self] in
-            self?.commandWindowController.showWindow()
+        // Listen for hotkey changes from Settings
+        NotificationCenter.default.addObserver(forName: .hotkeyChanged, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                if let data = UserDefaults.standard.data(forKey: "globalShortcutData"),
+                   let shortcut = try? JSONDecoder().decode(Shortcut.self, from: data) {
+                    self?.updateHotkey(shortcut: shortcut)
+                }
+            }
         }
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name("ShowCommandWindow"), object: nil, queue: .main) { [weak self] _ in
-            self?.menuBarController.closePopover(nil)
-            self?.commandWindowController.showWindow()
-        }
-        
-        NotificationCenter.default.addObserver(forName: NSNotification.Name("ShowSettingsWindow"), object: nil, queue: .main) { [weak self] _ in
-            self?.menuBarController.closePopover(nil)
-            NSApp.activate(ignoringOtherApps: true)
-            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            Task { @MainActor [weak self] in
+                self?.menuBarController.closePopover(nil)
+                self?.commandWindowController.showWindow()
+            }
         }
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name("ClosePopoverOnly"), object: nil, queue: .main) { [weak self] _ in
-            self?.menuBarController.closePopover(nil)
+            Task { @MainActor [weak self] in
+                self?.menuBarController.closePopover(nil)
+            }
         }
         
         startTaskTimer()
+    }
+    
+    public func applicationWillTerminate(_ notification: Notification) {
+        hotkeyManager.unregister()
     }
     
     public func updateHotkey(shortcut: Shortcut) {
@@ -78,7 +93,9 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func startTaskTimer() {
         taskTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.checkTasks()
+            Task { @MainActor [weak self] in
+                self?.checkTasks()
+            }
         }
     }
     

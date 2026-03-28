@@ -1,10 +1,10 @@
-// swift-tools-version: 5.8
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
     name: "RemindMe",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v15)
     ],
     products: [
         .executable(

@@ -2,7 +2,8 @@ import AppKit
 import SwiftUI
 import Combine
 
-public class ActivePopup: Identifiable, Equatable {
+@MainActor
+public class ActivePopup: Identifiable {
     public let id: UUID
     public let task: ReminderTask
     public var panel: NSPanel?
@@ -12,10 +13,6 @@ public class ActivePopup: Identifiable, Equatable {
         self.task = task
         self.panel = panel
     }
-    
-    public static func == (lhs: ActivePopup, rhs: ActivePopup) -> Bool {
-        lhs.id == rhs.id
-    }
 }
 
 public enum PopupAction {
@@ -24,6 +21,7 @@ public enum PopupAction {
     case stillRunning
 }
 
+@MainActor
 public class PopupManager: ObservableObject {
     @Published public private(set) var visiblePopups: [ActivePopup] = []
     @Published public private(set) var overflowPopups: [ActivePopup] = []
@@ -173,7 +171,7 @@ public class PopupManager: ObservableObject {
     
     // MARK: - Dismiss Animation
     
-    private func animateDismiss(panel: NSPanel?, completion: @escaping () -> Void) {
+    private func animateDismiss(panel: NSPanel?, completion: @escaping @MainActor () -> Void) {
         guard let panel = panel else {
             completion()
             return
@@ -185,7 +183,9 @@ public class PopupManager: ObservableObject {
             panel.animator().alphaValue = 0
             panel.contentView?.animator().layer?.transform = CATransform3DMakeScale(0.95, 0.95, 1.0)
         }) {
-            completion()
+            Task { @MainActor in
+                completion()
+            }
         }
     }
     

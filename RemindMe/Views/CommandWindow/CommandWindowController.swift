@@ -93,7 +93,9 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
             window.animator().alphaValue = 1.0
             window.contentView?.animator().layer?.transform = CATransform3DIdentity
         }) {
-            self.isAnimating = false
+            Task { @MainActor in
+                self.isAnimating = false
+            }
         }
     }
     
@@ -107,8 +109,10 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
             window.animator().alphaValue = 0.0
             window.contentView?.animator().layer?.transform = CATransform3DMakeScale(0.95, 0.95, 1.0)
         }) {
-            window.orderOut(nil)
-            self.isAnimating = false
+            Task { @MainActor in
+                window.orderOut(nil)
+                self.isAnimating = false
+            }
         }
     }
     
@@ -130,18 +134,6 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     }
     
     public func shortcutString(from shortcut: Shortcut) -> String {
-        var parts: [String] = []
-        let flags = NSEvent.ModifierFlags(rawValue: shortcut.modifiers)
-        if flags.contains(.control) { parts.append("⌃") }
-        if flags.contains(.option) { parts.append("⌥") }
-        if flags.contains(.shift) { parts.append("⇧") }
-        if flags.contains(.command) { parts.append("⌘") }
-        
-        if shortcut.keyCode == 49 { parts.append("Space") }
-        else if shortcut.keyCode == 36 { parts.append("Return") }
-        else if shortcut.keyCode == 53 { parts.append("Esc") }
-        else { parts.append("Key \(shortcut.keyCode)") }
-        
-        return parts.joined(separator: " ")
+        return shortcut.displayString
     }
 }

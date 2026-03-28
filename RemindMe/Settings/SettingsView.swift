@@ -50,7 +50,7 @@ public class ShortcutRecorderNSView: NSView {
         path.stroke()
         path.fill()
         
-        let text = isRecording ? "Type new shortcut" : string(for: shortcut)
+        let text = isRecording ? "Type new shortcut" : shortcut.displayString
         let font = NSFont.systemFont(ofSize: 13)
         let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: NSColor.labelColor]
         let size = text.size(withAttributes: attrs)
@@ -85,26 +85,7 @@ public class ShortcutRecorderNSView: NSView {
         window?.makeFirstResponder(nil)
     }
     
-    private func string(for shortcut: Shortcut) -> String {
-        var parts: [String] = []
-        let flags = NSEvent.ModifierFlags(rawValue: shortcut.modifiers)
-        if flags.contains(.control) { parts.append("⌃") }
-        if flags.contains(.option) { parts.append("⌥") }
-        if flags.contains(.shift) { parts.append("⇧") }
-        if flags.contains(.command) { parts.append("⌘") }
-        
-        if shortcut.keyCode == 49 {
-            parts.append("Space")
-        } else if shortcut.keyCode == 36 {
-            parts.append("Return")
-        } else if shortcut.keyCode == 53 {
-            parts.append("Esc")
-        } else {
-            parts.append("Key \(shortcut.keyCode)")
-        }
-        
-        return parts.joined(separator: " ")
-    }
+    // `string(for: shortcut)` was removed because `shortcut.displayString` is now universally available.
 }
 
 public struct SettingsView: View {

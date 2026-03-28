@@ -1,6 +1,20 @@
 import AppKit
 import SwiftUI
 
+@MainActor
+public final class CommandWindowState: ObservableObject {
+    @Published public var shortcutHint: String
+    @Published public private(set) var focusRequestID = UUID()
+
+    public init(shortcutHint: String = "⌘ ⇧ Space") {
+        self.shortcutHint = shortcutHint
+    }
+
+    public func requestFocus() {
+        focusRequestID = UUID()
+    }
+}
+
 public class CommandPanel: NSPanel {
     public override var canBecomeKey: Bool { true }
     public override var canBecomeMain: Bool { true }
@@ -14,6 +28,7 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     public var onParseText: ((String) -> Void)?
     
     private var isAnimating = false
+    private let state = CommandWindowState()
     
     public init() {
         let panel = CommandPanel(
@@ -43,7 +58,7 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         
         panel.contentView = visualEffect
         
-        let swiftUIView = CommandWindowView { [weak self] text in
+        let swiftUIView = CommandWindowView(state: state) { [weak self] text in
             self?.onParseText?(text)
         } onEscape: { [weak self] in
             self?.hideWindow()
@@ -80,8 +95,11 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
             window.center()
         }
         
-        window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+        window.orderFrontRegardless()
+        window.makeKeyAndOrderFront(nil)
+        window.makeFirstResponder(nil)
+        state.requestFocus()
         
         isAnimating = true
         window.alphaValue = 0
@@ -119,18 +137,13 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     public func windowDidResignKey(_ notification: Notification) {
         hideWindow()
     }
+
+    public func windowDidBecomeKey(_ notification: Notification) {
+        state.requestFocus()
+    }
     
     public func updateShortcutHint(with shortcut: Shortcut) {
-        let text = shortcutString(from: shortcut)
-        let swiftUIView = CommandWindowView(shortcutHint: text) { [weak self] text in
-            self?.onParseText?(text)
-        } onEscape: { [weak self] in
-            self?.hideWindow()
-        }
-        if let visualEffect = self.window?.contentView as? NSVisualEffectView,
-           let host = visualEffect.subviews.first(where: { $0 is NSHostingView<CommandWindowView> }) as? NSHostingView<CommandWindowView> {
-            host.rootView = swiftUIView
-        }
+        state.shortcutHint = shortcutString(from: shortcut)
     }
     
     public func shortcutString(from shortcut: Shortcut) -> String {

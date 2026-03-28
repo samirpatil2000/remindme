@@ -1,16 +1,17 @@
 import SwiftUI
 
 public struct CommandWindowView: View {
+    @ObservedObject private var state: CommandWindowState
     @State private var inputText = ""
     @State private var showConfirmation = false
     @State private var confirmationMessage = ""
-    
-    public var shortcutHint: String
+    @FocusState private var isInputFocused: Bool
+
     public var onSubmit: (String) -> Void
     public var onEscape: () -> Void
-    
-    public init(shortcutHint: String = "⌘ ⇧ Space", onSubmit: @escaping (String) -> Void, onEscape: @escaping () -> Void) {
-        self.shortcutHint = shortcutHint
+
+    public init(state: CommandWindowState, onSubmit: @escaping (String) -> Void, onEscape: @escaping () -> Void) {
+        self.state = state
         self.onSubmit = onSubmit
         self.onEscape = onEscape
     }
@@ -36,6 +37,7 @@ public struct CommandWindowView: View {
                     TextField("Remind me to... @10m", text: $inputText)
                         .font(.system(size: 28, weight: .ultraLight))
                         .textFieldStyle(.plain)
+                        .focused($isInputFocused)
                         .onSubmit {
                             let text = inputText
                             if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -55,7 +57,7 @@ public struct CommandWindowView: View {
                     if inputText.isEmpty {
                         // Keyboard shortcut hint
                         HStack(spacing: 4) {
-                            let parts = shortcutHint.split(separator: " ")
+                            let parts = state.shortcutHint.split(separator: " ")
                             ForEach(0..<parts.count, id: \.self) { i in
                                 Text(String(parts[i]))
                             }
@@ -72,5 +74,16 @@ public struct CommandWindowView: View {
             }
         }
         .frame(width: 560, height: 72)
+        .task(id: state.focusRequestID) {
+            guard !showConfirmation else { return }
+
+            // Focus can race with panel activation, so we nudge it twice.
+            isInputFocused = false
+            await Task.yield()
+            isInputFocused = true
+
+            try? await Task.sleep(for: .milliseconds(50))
+            isInputFocused = true
+        }
     }
 }

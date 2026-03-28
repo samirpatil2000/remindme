@@ -3,7 +3,7 @@ import SwiftUI
 
 public class PopupCard: NSPanel {
     public init(view: some View) {
-        super.init(contentRect: NSRect(x: 0, y: 0, width: 360, height: 160),
+        super.init(contentRect: NSRect(x: 0, y: 0, width: 380, height: 180),
                    styleMask: [.nonactivatingPanel, .fullSizeContentView, .borderless],
                    backing: .buffered,
                    defer: false)
@@ -33,7 +33,10 @@ public class PopupCard: NSPanel {
         ])
         
         visualEffect.wantsLayer = true
-        visualEffect.layer?.cornerRadius = 14
+        visualEffect.layer?.cornerRadius = 16
+        visualEffect.layer?.shadowOpacity = 0.25
+        visualEffect.layer?.shadowRadius = 20
+        visualEffect.layer?.shadowOffset = CGSize(width: 0, height: -4)
         visualEffect.layer?.masksToBounds = true
         
         self.contentView = visualEffect

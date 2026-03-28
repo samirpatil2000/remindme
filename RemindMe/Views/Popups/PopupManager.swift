@@ -32,10 +32,9 @@ public class PopupManager: ObservableObject {
     public var onOpenMenuBar: (() -> Void)?
     
     private let maxVisible = 3
-    private let cardWidth: CGFloat = 360
-    private let cardHeight: CGFloat = 160
-    private let stackGap: CGFloat = 8
-    private let screenEdgePadding: CGFloat = 16
+    private let cardWidth: CGFloat = 380
+    private let cardHeight: CGFloat = 180
+    private let stackGap: CGFloat = 10
     
     public init(taskStore: TaskStore) {
         self.taskStore = taskStore
@@ -121,12 +120,12 @@ public class PopupManager: ObservableObject {
         let panel = PopupCard(view: cardView)
         popup.panel = panel
         
-        // Position at center of screen, start slightly scaled down
+        // Initial position — center of screen
         guard let screen = NSScreen.main else { return }
         let screenFrame = screen.visibleFrame
-        let centerX = screenFrame.maxX - cardWidth - screenEdgePadding
-        let centerY = screenFrame.minY + screenEdgePadding
-        
+        let centerX = screenFrame.midX - cardWidth / 2
+        let centerY = screenFrame.midY - cardHeight / 2
+
         panel.setFrame(NSRect(x: centerX, y: centerY, width: cardWidth, height: cardHeight), display: true)
         panel.alphaValue = 0
         panel.contentView?.layer?.transform = CATransform3DMakeScale(0.95, 0.95, 1.0)
@@ -146,26 +145,27 @@ public class PopupManager: ObservableObject {
     private func layoutPanels() {
         guard let screen = NSScreen.main else { return }
         let screenFrame = screen.visibleFrame
-        
-        // Calculate total stack height to center the group vertically
+
         let totalCards = CGFloat(visiblePopups.count)
         let totalHeight = totalCards * cardHeight + (totalCards - 1) * stackGap
-        let startY = screenFrame.minY + screenEdgePadding + totalHeight
-        
+
+        // Center the stack on screen
+        let centerX = screenFrame.midX - cardWidth / 2
+        let stackTopY = screenFrame.midY + totalHeight / 2
+
         for (index, popup) in visiblePopups.enumerated() {
             guard let panel = popup.panel else { continue }
-            
-            let targetX = screenFrame.maxX - cardWidth - screenEdgePadding
-            let targetY = startY - CGFloat(index + 1) * cardHeight - CGFloat(index) * stackGap
-            let targetFrame = NSRect(x: targetX, y: targetY, width: cardWidth, height: cardHeight)
-            
+
+            let targetY = stackTopY - CGFloat(index + 1) * cardHeight - CGFloat(index) * stackGap
+            let targetFrame = NSRect(x: centerX, y: targetY, width: cardWidth, height: cardHeight)
+
             NSAnimationContext.runAnimationGroup { context in
-                context.duration = 0.15
+                context.duration = 0.2
                 context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                 panel.animator().setFrame(targetFrame, display: true)
             }
         }
-        
+
         updateMoreIndicator()
     }
     
@@ -213,13 +213,11 @@ public class PopupManager: ObservableObject {
         
         if moreIndicatorPanel == nil {
             let panel = PopupCard(view: view)
+            let totalHeight = CGFloat(maxVisible) * cardHeight + CGFloat(maxVisible - 1) * stackGap
+            let centerX = screenFrame.midX - cardWidth / 2
+            let indicatorY = screenFrame.midY - totalHeight / 2 - stackGap - indicatorHeight
             panel.setFrame(
-                NSRect(
-                    x: screenFrame.maxX - cardWidth - screenEdgePadding,
-                    y: screenFrame.maxY - (CGFloat(maxVisible + 1) * (cardHeight + stackGap)),
-                    width: cardWidth,
-                    height: indicatorHeight
-                ),
+                NSRect(x: centerX, y: indicatorY, width: cardWidth, height: indicatorHeight),
                 display: true
             )
             panel.orderFrontRegardless()

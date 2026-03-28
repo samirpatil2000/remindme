@@ -6,91 +6,103 @@ public struct PopupStackView: View {
     public let onDone: () -> Void
     public let onSnooze: (Int) -> Void
     public let onStillRunning: () -> Void
-    
+
     public init(title: String, onDone: @escaping () -> Void, onSnooze: @escaping (Int) -> Void, onStillRunning: @escaping () -> Void) {
         self.title = title
         self.onDone = onDone
         self.onSnooze = onSnooze
         self.onStillRunning = onStillRunning
     }
-    
+
     public var body: some View {
-        HStack(spacing: 0) {
-            // Accent Bar
+        VStack(alignment: .leading, spacing: 0) {
+            // Top accent stripe
             Rectangle()
                 .fill(Color(nsColor: .controlAccentColor))
-                .frame(width: 4)
-            
-            VStack(alignment: .leading, spacing: 0) {
-                VStack(alignment: .leading, spacing: 12) {
-                    // Header Region
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(title)
-                            .font(.title3.weight(.medium))
-                            .foregroundStyle(Color(nsColor: .labelColor))
-                            .lineLimit(1)
-                        
-                        TimelineView(.periodic(from: Date(), by: 1.0)) { context in
-                            Text(timeAgoString(from: firedAt, to: context.date))
-                                .font(.subheadline)
-                                .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                        }
+                .frame(height: 3)
+
+            VStack(alignment: .leading, spacing: 14) {
+                // Title + timestamp
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(title)
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(Color(nsColor: .labelColor))
+                        .lineLimit(2)
+
+                    TimelineView(.periodic(from: Date(), by: 1.0)) { context in
+                        Text(timeAgoString(from: firedAt, to: context.date))
+                            .font(.footnote)
+                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
                     }
-                    
-                    // Actions Region
-                    HStack(spacing: 8) {
-                        Button(action: onDone) {
-                            Label("Done", systemImage: "checkmark")
-                                .font(.body.weight(.medium))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color(nsColor: .controlAccentColor))
-                                .foregroundStyle(.white)
-                                .cornerRadius(16)
-                        }
-                        .buttonStyle(.plain)
-                        
-                        Button(action: onStillRunning) {
-                            Text("Still Running")
-                                .font(.body)
-                                .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                                .underline()
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.leading, 4)
-                    }
-                    .padding(.top, 4)
                 }
-                .padding(20)
-                
-                VStack(spacing: 0) {
-                    Divider()
-                    HStack(spacing: 6) {
-                        Text("Snooze").font(.caption).foregroundStyle(.secondary)
-                        ForEach([5, 15, 60], id: \.self) { mins in
-                            Button(mins < 60 ? "\(mins)m" : "1h") { onSnooze(mins) }.buttonStyle(.bordered).controlSize(.mini)
-                        }
+
+                // Primary actions
+                HStack(spacing: 8) {
+                    Button(action: onDone) {
+                        Label("Done", systemImage: "checkmark")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(Color(nsColor: .controlAccentColor))
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
-                    .padding(.horizontal, 18).padding(.vertical, 10)
+                    .buttonStyle(.plain)
+
+                    Button(action: onStillRunning) {
+                        Text("Still Running")
+                            .font(.subheadline.weight(.medium))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(Color(nsColor: .separatorColor).opacity(0.4))
+                            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                // Snooze row
+                HStack(spacing: 7) {
+                    Text("Snooze")
+                        .font(.caption)
+                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+
+                    ForEach([5, 15, 60], id: \.self) { mins in
+                        Button(mins < 60 ? "\(mins)m" : "1h") { onSnooze(mins) }
+                            .buttonStyle(SnoozeChipStyle())
+                    }
+
+                    Spacer()
                 }
             }
-            
-            Spacer(minLength: 0)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 18)
         }
-        .frame(width: 360)
+        .frame(width: 380)
         .background(Color.clear)
     }
-    
+
     private func timeAgoString(from date: Date, to now: Date) -> String {
         let diff = Int(now.timeIntervalSince(date))
-        if diff < 60 {
-            return "Fired just now"
-        }
+        if diff < 60 { return "Fired just now" }
         let mins = diff / 60
-        if mins < 60 {
-            return "Fired \(mins)m ago"
-        }
+        if mins < 60 { return "Fired \(mins)m ago" }
         return "Fired \(mins / 60)h \(mins % 60)m ago"
+    }
+}
+
+private struct SnoozeChipStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.caption.weight(.medium))
+            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(Color(nsColor: .separatorColor).opacity(configuration.isPressed ? 0.5 : 0.3))
+            )
     }
 }
 
@@ -112,6 +124,6 @@ public struct MoreIndicatorView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
-        .frame(width: 360)
+        .frame(width: 380)
     }
 }

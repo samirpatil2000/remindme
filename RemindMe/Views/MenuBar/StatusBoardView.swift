@@ -169,7 +169,7 @@ public struct TaskRowView: View {
                     .frame(width: 8, height: 8)
                 
                 Text(task.title)
-                    .font(.body.weight(.medium))
+                    .font(.system(.body, design: .rounded).weight(.medium))
                     .foregroundStyle(Color(nsColor: .labelColor))
                     .lineLimit(1)
                 

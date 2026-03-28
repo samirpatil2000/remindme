@@ -5,6 +5,9 @@ public struct CommandWindowView: View {
     @State private var inputText = ""
     @State private var showConfirmation = false
     @State private var confirmationMessage = ""
+    @State private var window: NSWindow?
+    @State private var hasFocusedCurrentPresentation = false
+    @State private var hasAppliedInitialFocusDelay = false
     @FocusState private var isInputFocused: Bool
 
     public var onSubmit: (String) -> Void
@@ -31,11 +34,11 @@ public struct CommandWindowView: View {
             } else {
                 HStack(spacing: 16) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 24, weight: .ultraLight))
+                        .font(.system(size: 28, weight: .ultraLight, design: .rounded))
                         .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
                     
                     TextField("Remind me to... @10m", text: $inputText)
-                        .font(.system(size: 28, weight: .ultraLight))
+                        .font(.system(size: 28, weight: .ultraLight, design: .rounded))
                         .textFieldStyle(.plain)
                         .focused($isInputFocused)
                         .onSubmit {
@@ -74,16 +77,45 @@ public struct CommandWindowView: View {
             }
         }
         .frame(width: 560, height: 72)
+        .background(WindowAccessor(window: $window))
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { notification in
+            guard notification.object as AnyObject? === window else { return }
+            hasFocusedCurrentPresentation = false
+            isInputFocused = false
+        }
         .task(id: state.focusRequestID) {
             guard !showConfirmation else { return }
+            guard let targetWindow = window ?? NSApp.keyWindow ?? NSApp.mainWindow, targetWindow.isVisible else { return }
+            guard !hasFocusedCurrentPresentation else { return }
 
-            // Focus can race with panel activation, so we nudge it twice.
+            hasFocusedCurrentPresentation = true
             isInputFocused = false
+
+            if !hasAppliedInitialFocusDelay {
+                try? await Task.sleep(for: .milliseconds(50))
+                hasAppliedInitialFocusDelay = true
+            }
+
             await Task.yield()
             isInputFocused = true
+        }
+    }
+}
 
-            try? await Task.sleep(for: .milliseconds(50))
-            isInputFocused = true
+private struct WindowAccessor: NSViewRepresentable {
+    @Binding var window: NSWindow?
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async {
+            window = view.window
+        }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        DispatchQueue.main.async {
+            window = nsView.window
         }
     }
 }

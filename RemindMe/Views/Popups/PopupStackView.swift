@@ -6,6 +6,7 @@ public struct PopupStackView: View {
     public let onDone: () -> Void
     public let onSnooze: (Int) -> Void
     public let onStillRunning: () -> Void
+    @State private var isDismissing = false
 
     public init(title: String, onDone: @escaping () -> Void, onSnooze: @escaping (Int) -> Void, onStillRunning: @escaping () -> Void) {
         self.title = title
@@ -25,7 +26,7 @@ public struct PopupStackView: View {
                 // Title + timestamp
                 VStack(alignment: .leading, spacing: 5) {
                     Text(title)
-                        .font(.title3.weight(.semibold))
+                        .font(.system(.title3, design: .rounded).weight(.semibold))
                         .foregroundStyle(Color(nsColor: .labelColor))
                         .lineLimit(2)
 
@@ -38,28 +39,21 @@ public struct PopupStackView: View {
 
                 // Primary actions
                 HStack(spacing: 8) {
-                    Button(action: onDone) {
+                    Button {
+                        dismissWithAnimation(onDone)
+                    } label: {
                         Label("Done", systemImage: "checkmark")
-                            .font(.subheadline.weight(.semibold))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .background(Color(nsColor: .controlAccentColor))
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PopupPrimaryActionButtonStyle())
 
-                    Button(action: onStillRunning) {
+                    Button {
+                        dismissWithAnimation(onStillRunning)
+                    } label: {
                         Text("Still Running")
-                            .font(.subheadline.weight(.medium))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .background(Color(nsColor: .separatorColor).opacity(0.4))
-                            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PopupSecondaryActionButtonStyle())
                 }
+                .disabled(isDismissing)
 
                 // Snooze row
                 HStack(spacing: 7) {
@@ -81,6 +75,8 @@ public struct PopupStackView: View {
         }
         .frame(width: 380)
         .background(Color.clear)
+        .scaleEffect(isDismissing ? 0.96 : 1.0)
+        .opacity(isDismissing ? 0 : 1)
     }
 
     private func timeAgoString(from date: Date, to now: Date) -> String {
@@ -89,6 +85,19 @@ public struct PopupStackView: View {
         let mins = diff / 60
         if mins < 60 { return "Fired \(mins)m ago" }
         return "Fired \(mins / 60)h \(mins % 60)m ago"
+    }
+
+    private func dismissWithAnimation(_ action: @escaping () -> Void) {
+        guard !isDismissing else { return }
+
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            isDismissing = true
+        }
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(180))
+            action()
+        }
     }
 }
 
@@ -103,6 +112,34 @@ private struct SnoozeChipStyle: ButtonStyle {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(Color(nsColor: .separatorColor).opacity(configuration.isPressed ? 0.5 : 0.3))
             )
+    }
+}
+
+private struct PopupPrimaryActionButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(Color(nsColor: .controlAccentColor))
+            .foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
+    }
+}
+
+private struct PopupSecondaryActionButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(Color(nsColor: .separatorColor).opacity(0.4))
+            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 

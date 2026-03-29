@@ -16,7 +16,7 @@ public class PopupCard: NSPanel {
         self.isOpaque = false
         
         let visualEffect = NSVisualEffectView()
-        visualEffect.material = .hudWindow
+        visualEffect.material = .popover
         visualEffect.state = .active
         visualEffect.blendingMode = .behindWindow
         
@@ -33,9 +33,9 @@ public class PopupCard: NSPanel {
         ])
         
         visualEffect.wantsLayer = true
-        visualEffect.layer?.cornerRadius = 16
-        visualEffect.layer?.shadowOpacity = 0.25
-        visualEffect.layer?.shadowRadius = 20
+        visualEffect.layer?.cornerRadius = 12
+        visualEffect.layer?.shadowOpacity = 0.18
+        visualEffect.layer?.shadowRadius = 12
         visualEffect.layer?.shadowOffset = CGSize(width: 0, height: -4)
         visualEffect.layer?.masksToBounds = true
         

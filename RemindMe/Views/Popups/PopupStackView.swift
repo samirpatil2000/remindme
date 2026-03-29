@@ -17,16 +17,11 @@ public struct PopupStackView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Top accent stripe
-            Rectangle()
-                .fill(Color(nsColor: .controlAccentColor))
-                .frame(height: 3)
-
             VStack(alignment: .leading, spacing: 14) {
                 // Title + timestamp
                 VStack(alignment: .leading, spacing: 5) {
                     Text(title)
-                        .font(.system(.title3, design: .rounded).weight(.semibold))
+                        .font(.body.weight(.medium))
                         .foregroundStyle(Color(nsColor: .labelColor))
                         .lineLimit(2)
 
@@ -62,15 +57,16 @@ public struct PopupStackView: View {
                         .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
 
                     ForEach([5, 15, 60], id: \.self) { mins in
-                        Button(mins < 60 ? "\(mins)m" : "1h") { onSnooze(mins) }
-                            .buttonStyle(SnoozeChipStyle())
+                        SnoozeChip(label: mins < 60 ? "\(mins)m" : "1h") {
+                            onSnooze(mins)
+                        }
                     }
 
                     Spacer()
                 }
             }
             .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .padding(.top, 12)
             .padding(.bottom, 18)
         }
         .frame(width: 380)
@@ -102,44 +98,109 @@ public struct PopupStackView: View {
 }
 
 private struct SnoozeChipStyle: ButtonStyle {
+    let isHovering: Bool
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.caption.weight(.medium))
-            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+            .font(.caption2.weight(.regular))
+            .foregroundStyle(
+                isHovering
+                    ? Color(nsColor: .systemOrange)
+                    : Color(nsColor: .tertiaryLabelColor)
+            )
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(Color(nsColor: .separatorColor).opacity(configuration.isPressed ? 0.5 : 0.3))
+                    .fill(
+                        isHovering
+                            ? Color(nsColor: .systemOrange).opacity(0.12)
+                            : Color(nsColor: .quaternaryLabelColor).opacity(0.65)
+                    )
             )
+            .scaleEffect(configuration.isPressed ? 0.97 : (isHovering ? 1.06 : 1.0))
+            .animation(.easeOut(duration: 0.12), value: isHovering)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 
 private struct PopupPrimaryActionButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(.subheadline, design: .rounded).weight(.semibold))
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(Color(nsColor: .controlAccentColor))
-            .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
+        PopupActionButton(configuration: configuration, hoverStyle: .done)
     }
 }
 
 private struct PopupSecondaryActionButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
+        PopupActionButton(configuration: configuration, hoverStyle: .stillRunning)
+    }
+}
+
+private enum PopupActionHoverStyle {
+    case done
+    case stillRunning
+}
+
+private struct PopupActionButton: View {
+    let configuration: ButtonStyle.Configuration
+    let hoverStyle: PopupActionHoverStyle
+    @State private var isHovering = false
+
+    private var backgroundColor: Color {
+        guard isHovering else { return Color(nsColor: .controlColor) }
+
+        switch hoverStyle {
+        case .done:
+            return Color(nsColor: .controlAccentColor)
+        case .stillRunning:
+            return Color(nsColor: .systemOrange).opacity(0.15)
+        }
+    }
+
+    private var foregroundColor: Color {
+        guard isHovering else { return Color(nsColor: .labelColor) }
+
+        switch hoverStyle {
+        case .done:
+            return .white
+        case .stillRunning:
+            return Color(nsColor: .systemOrange)
+        }
+    }
+
+    var body: some View {
         configuration.label
-            .font(.system(.subheadline, design: .rounded).weight(.semibold))
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(Color(nsColor: .separatorColor).opacity(0.4))
-            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
+            .font(.subheadline.weight(.semibold))
+            .frame(maxWidth: .infinity, minHeight: 36)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(backgroundColor)
+            )
+            .foregroundStyle(foregroundColor)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .onHover { hovering in
+                withAnimation(.easeOut(duration: 0.12)) {
+                    isHovering = hovering
+                }
+            }
+            .animation(.easeOut(duration: 0.12), value: isHovering)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+}
+
+private struct SnoozeChip: View {
+    let label: String
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(label, action: action)
+            .buttonStyle(SnoozeChipStyle(isHovering: isHovering))
+            .onHover { hovering in
+                withAnimation(.easeOut(duration: 0.12)) {
+                    isHovering = hovering
+                }
+            }
     }
 }
 

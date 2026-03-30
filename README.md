@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.svg" alt="RemindMe Logo" width="128" height="128">
+  <img src="Assets.xcassets/AppIcon.appiconset/icon_128x128.png" alt="RemindMe Logo" width="128" height="128">
 </p>
 
 <h1 align="center">RemindMe</h1>

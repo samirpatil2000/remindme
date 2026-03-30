@@ -76,3 +76,6 @@ fastlane/test_output
 #
 # It is recommended to not store .DS_Store files in the repo.
 .DS_Store
+
+# Local release configuration
+.env

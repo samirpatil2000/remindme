@@ -12,7 +12,9 @@ public class MenuBarController {
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "stopwatch", accessibilityDescription: "RemindMe")
+            let icon = NSImage(systemSymbolName: "stopwatch", accessibilityDescription: "RemindMe")
+            icon?.isTemplate = true
+            button.image = icon
             button.action = #selector(togglePopover(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }

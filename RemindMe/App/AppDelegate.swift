@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 
 @MainActor
 public class AppDelegate: NSObject, NSApplicationDelegate {
@@ -67,6 +68,12 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         
+        // Auto-register for launch at login on first run
+        if !UserDefaults.standard.bool(forKey: "launchAtLoginPrompted") {
+            UserDefaults.standard.set(true, forKey: "launchAtLoginPrompted")
+            try? SMAppService.mainApp.register()
+        }
+
         startTaskTimer()
     }
     

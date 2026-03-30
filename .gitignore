@@ -79,3 +79,5 @@ fastlane/test_output
 
 # Local release configuration
 .env
+*.dmg
+dmg/

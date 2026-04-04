@@ -25,13 +25,26 @@ public struct StatusBoardView: View {
             ScrollView {
                 VStack(spacing: 8) {
                     if activeAndPastDueTasks.isEmpty {
-                        VStack(spacing: 12) {
-                            Image(systemName: "clock.badge.checkmark")
-                                .font(.system(size: 32, weight: .light))
-                                .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                        VStack(spacing: 6) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(nsColor: .controlBackgroundColor))
+                                    .frame(width: 56, height: 56)
+                                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                                
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 22, weight: .medium))
+                                    .foregroundStyle(Color.green.opacity(0.8))
+                            }
+                            .padding(.bottom, 8)
+                            
                             Text("All clear")
-                                .font(.body.weight(.medium))
-                                .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                                .font(.system(.body, design: .rounded).weight(.medium))
+                                .foregroundStyle(Color.primary)
+                            
+                            Text("Take a breath or start something new.")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color.secondary)
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.vertical, 32)
@@ -150,8 +163,12 @@ public struct StatusBoardView: View {
                 }
                 
                 let total = taskStore.tasks.filter { Calendar.current.isDate($0.createdAt, inSameDayAs: taskStore.now()) }.count
-                let progress = total > 0 ? Double(taskStore.completedToday) / Double(total) : 0.0
-                ProgressView(value: progress).progressViewStyle(.linear).tint(.green).frame(height: 2).padding(.top, 6)
+                if total > 0 {
+                    let progress = Double(taskStore.completedToday) / Double(total)
+                    ProgressView(value: progress).progressViewStyle(.linear).tint(.green).frame(height: 2).padding(.top, 6)
+                } else {
+                    Spacer().frame(height: 8)
+                }
             }
             
             Spacer()

@@ -7,6 +7,7 @@ public struct PopupStackView: View {
     public let onSnooze: (Int) -> Void
     public let onStillRunning: () -> Void
     @State private var isDismissing = false
+    @State private var showSnooze = false
 
     public init(title: String, onDone: @escaping () -> Void, onSnooze: @escaping (Int) -> Void, onStillRunning: @escaping () -> Void) {
         self.title = title
@@ -42,27 +43,28 @@ public struct PopupStackView: View {
                     .buttonStyle(PopupPrimaryActionButtonStyle())
 
                     Button {
-                        dismissWithAnimation(onStillRunning)
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            showSnooze.toggle()
+                        }
                     } label: {
-                        Text("Still Running")
+                        Text(showSnooze ? "Snooze" : "Still Running")
                     }
                     .buttonStyle(PopupSecondaryActionButtonStyle())
                 }
                 .disabled(isDismissing)
 
-                // Snooze row
-                HStack(spacing: 7) {
-                    Text("Snooze")
-                        .font(.caption)
-                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
-
-                    ForEach([2, 5, 15, 60], id: \.self) { mins in
-                        SnoozeChip(label: mins < 60 ? "\(mins)m" : "1h") {
-                            onSnooze(mins)
+                // Snooze row — revealed after "Still Running"
+                if showSnooze {
+                    HStack(spacing: 7) {
+                        ForEach([2, 5, 15, 60], id: \.self) { mins in
+                            SnoozeChip(label: mins < 60 ? "\(mins)m" : "1h") {
+                                dismissWithAnimation { onSnooze(mins) }
+                            }
                         }
-                    }
 
-                    Spacer()
+                        Spacer()
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
             .padding(.horizontal, 20)

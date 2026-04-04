@@ -25,7 +25,7 @@ public class CommandPanel: NSPanel {
 }
 
 public class CommandWindowController: NSWindowController, NSWindowDelegate {
-    public var onParseText: ((String) -> Void)?
+    public var onParseText: ((String, TimeInterval?) -> Void)?
     
     private var isAnimating = false
     private let state = CommandWindowState()
@@ -58,10 +58,12 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         
         panel.contentView = visualEffect
         
-        let swiftUIView = CommandWindowView(state: state) { [weak self] text in
-            self?.onParseText?(text)
+        let swiftUIView = CommandWindowView(state: state) { [weak self] text, duration in
+            self?.onParseText?(text, duration)
         } onEscape: { [weak self] in
             self?.hideWindow()
+        } onTogglePicker: { [weak self] showPicker in
+            self?.resizePanel(to: showPicker ? 220 : 72)
         }
         
         let hostingView = NSHostingView(rootView: swiftUIView)
@@ -134,12 +136,42 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
+    private var localEventMonitor: Any?
+
     public func windowDidResignKey(_ notification: Notification) {
+        if let monitor = localEventMonitor {
+            NSEvent.removeMonitor(monitor)
+            localEventMonitor = nil
+        }
         hideWindow()
     }
 
     public func windowDidBecomeKey(_ notification: Notification) {
         state.requestFocus()
+        
+        if localEventMonitor == nil {
+            localEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                if event.keyCode == 48 { // Tab
+                    NotificationCenter.default.post(name: NSNotification.Name("CommandWindowTabPressed"), object: nil)
+                    return nil
+                }
+                return event
+            }
+        }
+    }
+    
+    public func resizePanel(to newHeight: CGFloat) {
+        guard let window = self.window else { return }
+        var currentFrame = window.frame
+        let heightDiff = newHeight - currentFrame.height
+        currentFrame.origin.y -= heightDiff
+        currentFrame.size.height = newHeight
+        
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.3
+            context.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+            window.animator().setFrame(currentFrame, display: true)
+        }
     }
     
     public func updateShortcutHint(with shortcut: Shortcut) {

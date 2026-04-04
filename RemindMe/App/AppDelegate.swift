@@ -23,8 +23,8 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         commandWindowController = CommandWindowController()
         hotkeyManager = HotkeyManager()
         
-        commandWindowController.onParseText = { [weak self] text in
-            self?.handleCommand(text)
+        commandWindowController.onParseText = { [weak self] text, duration in
+            self?.handleCommand(text, duration: duration)
         }
         
         popupManager.onOpenMenuBar = { [weak self] in
@@ -86,7 +86,17 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         commandWindowController.updateShortcutHint(with: shortcut)
     }
     
-    private func handleCommand(_ text: String) {
+    private func handleCommand(_ text: String, duration: TimeInterval? = nil) {
+        if let explicitDuration = duration {
+            let parsedTitle = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !parsedTitle.isEmpty {
+                let fireDate = taskStore.now().addingTimeInterval(explicitDuration)
+                let task = ReminderTask(title: parsedTitle, reminderFiresAt: fireDate)
+                taskStore.add(task: task)
+            }
+            return
+        }
+        
         let result = ReminderParser.parse(text)
         switch result {
         case .success(let payload):

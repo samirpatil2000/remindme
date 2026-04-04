@@ -40,7 +40,7 @@ public struct CommandWindowView: View {
                             .font(.system(size: 28, weight: .ultraLight, design: .rounded))
                             .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
                         
-                        TextField("Remind me to...", text: $inputText)
+                        TextField("Remind me to... @5m", text: $inputText)
                             .font(.system(size: 28, weight: .ultraLight, design: .rounded))
                             .textFieldStyle(.plain)
                             .focused($isInputFocused)

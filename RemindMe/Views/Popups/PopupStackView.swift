@@ -39,6 +39,7 @@ public struct PopupStackView: View {
                         dismissWithAnimation(onDone)
                     } label: {
                         Label("Done", systemImage: "checkmark")
+                            .font(.system(size: 14, weight: .semibold))
                     }
                     .buttonStyle(PopupPrimaryActionButtonStyle())
 
@@ -104,14 +105,14 @@ private struct SnoozeChipStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.caption2.weight(.regular))
+            .font(.caption.weight(.medium))
             .foregroundStyle(
                 isHovering
                     ? Color(nsColor: .systemOrange)
                     : Color(nsColor: .tertiaryLabelColor)
             )
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(

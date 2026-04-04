@@ -27,9 +27,23 @@ public class MenuBarController {
         statusItem.button?.target = self
     }
     
+    @objc private func showCommandWindowFromMenu() {
+        NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindow"), object: nil)
+    }
+
+    @objc private func openSettingsFromMenu() {
+        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
     @objc private func togglePopover(_ sender: AnyObject?) {
         if let event = NSApp.currentEvent, event.type == .rightMouseUp || event.modifierFlags.contains(.control) {
             let menu = NSMenu()
+            menu.addItem(withTitle: "New Reminder", action: #selector(showCommandWindowFromMenu), keyEquivalent: "n")
+            menu.items.last?.target = self
+            menu.addItem(withTitle: "Settings...", action: #selector(openSettingsFromMenu), keyEquivalent: ",")
+            menu.items.last?.target = self
+            menu.addItem(NSMenuItem.separator())
             menu.addItem(withTitle: "Quit RemindMe", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
             statusItem.menu = menu
             statusItem.button?.performClick(nil)

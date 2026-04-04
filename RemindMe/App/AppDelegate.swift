@@ -17,6 +17,10 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     public func applicationDidFinishLaunching(_ notification: Notification) {
+        // Match Buffer: set activation policy programmatically so the app
+        // can properly activate and receive keyboard events in its windows.
+        NSApp.setActivationPolicy(.accessory)
+        
         taskStore = TaskStore()
         popupManager = PopupManager(taskStore: taskStore)
         menuBarController = MenuBarController(taskStore: taskStore)
@@ -36,8 +40,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             self?.commandWindowController.showWindow()
         }
         
-        // Register the saved shortcut on launch. Carbon hotkeys should not depend
-        // on Accessibility permission the way global event taps do.
+        // Register the saved shortcut on launch.
         if let data = UserDefaults.standard.data(forKey: "globalShortcutData"),
            let shortcut = try? JSONDecoder().decode(Shortcut.self, from: data) {
             updateHotkey(shortcut: shortcut)
@@ -65,6 +68,18 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(forName: NSNotification.Name("ClosePopoverOnly"), object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor [weak self] in
                 self?.menuBarController.closePopover(nil)
+            }
+        }
+
+        // Temporarily unregister the hotkey while the ShortcutRecorder is capturing
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("HotkeyRecordingBegan"), object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.hotkeyManager.unregister()
+            }
+        }
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("HotkeyRecordingEnded"), object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.hotkeyManager.reregister()
             }
         }
         

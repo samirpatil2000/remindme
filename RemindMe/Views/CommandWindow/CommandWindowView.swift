@@ -122,19 +122,37 @@ public struct CommandWindowView: View {
                         }
                         
                         if inputText.isEmpty && selectedDuration == nil && suggestedDuration == nil {
-                            // Keyboard shortcut hint
-                            HStack(spacing: 4) {
-                                let parts = state.shortcutHint.split(separator: " ")
-                                ForEach(0..<parts.count, id: \.self) { i in
-                                    Text(String(parts[i]))
+                            HStack(spacing: 8) {
+                                // Individual key badges
+                                HStack(spacing: 4) {
+                                    let parts = state.shortcutHint.split(separator: " ")
+                                    ForEach(0..<parts.count, id: \.self) { i in
+                                        Text(String(parts[i]))
+                                            .font(.system(size: 12, weight: .medium))
+                                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 3)
+                                            .background(Color.gray.opacity(0.12))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 4)
+                                                    .stroke(Color.gray.opacity(0.25), lineWidth: 1)
+                                            )
+                                            .cornerRadius(4)
+                                    }
                                 }
+
+                                // Settings gear
+                                Button {
+                                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                                    NSApp.activate(ignoringOtherApps: true)
+                                } label: {
+                                    Image(systemName: "gearshape")
+                                        .font(.system(size: 13, weight: .light))
+                                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                }
+                                .buttonStyle(.plain)
+                                .help("Settings")
                             }
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.gray.opacity(0.15))
-                            .cornerRadius(6)
                         } else {
                             // Clock button
                             Button {

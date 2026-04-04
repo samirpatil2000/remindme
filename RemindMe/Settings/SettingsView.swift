@@ -2,122 +2,147 @@ import SwiftUI
 import AppKit
 import ServiceManagement
 
+// MARK: - ShortcutRecorder (matches Buffer's KeyRecorder pattern exactly)
+
+/// Invisible NSViewRepresentable placed as .background() on the settings view.
+/// When isRecording is true, updateNSView makes the view first responder to capture keys.
 public struct ShortcutRecorder: NSViewRepresentable {
-    @Binding public var shortcut: Shortcut
-    public var onRecordingChanged: (Bool) -> Void
-    
+    @Binding public var isRecording: Bool
+    public let onRecord: (Shortcut) -> Void
+
     public func makeNSView(context: Context) -> ShortcutRecorderNSView {
         let view = ShortcutRecorderNSView()
-        view.shortcut = shortcut
-        view.onShortcutChanged = { newShortcut in
-            self.shortcut = newShortcut
-        }
-        view.onRecordingChanged = onRecordingChanged
+        view.onRecord = onRecord
         return view
     }
-    
+
     public func updateNSView(_ nsView: ShortcutRecorderNSView, context: Context) {
-        nsView.shortcut = shortcut
+        nsView.isRecording = isRecording
+        if isRecording {
+            DispatchQueue.main.async {
+                nsView.window?.makeFirstResponder(nsView)
+            }
+        }
     }
 }
 
 public class ShortcutRecorderNSView: NSView {
-    public var shortcut: Shortcut = .defaultShortcut {
-        didSet { needsDisplay = true }
-    }
-    public var onShortcutChanged: ((Shortcut) -> Void)?
-    public var onRecordingChanged: ((Bool) -> Void)?
-    
-    private var isRecording = false {
-        didSet {
-            needsDisplay = true
-            onRecordingChanged?(isRecording)
-        }
-    }
-    
+    var isRecording = false
+    var onRecord: ((Shortcut) -> Void)?
+
     public override var acceptsFirstResponder: Bool { true }
-    
-    public override func draw(_ dirtyRect: NSRect) {
-        let path = NSBezierPath(roundedRect: bounds, xRadius: 4, yRadius: 4)
-        if isRecording {
-            NSColor.controlAccentColor.setStroke()
-            NSColor.controlAccentColor.withAlphaComponent(0.2).setFill()
-        } else {
-            NSColor.separatorColor.setStroke()
-            NSColor.windowBackgroundColor.setFill()
+
+    // Match Buffer's KeyRecorderView.viewDidMoveToWindow — force activation
+    public override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        if let window = self.window {
+            window.level = .floating
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                window.makeKeyAndOrderFront(nil)
+                window.orderFrontRegardless()
+                NSApp.activate(ignoringOtherApps: true)
+            }
         }
-        path.lineWidth = 2
-        path.stroke()
-        path.fill()
-        
-        let text = isRecording ? "Type new shortcut" : shortcut.displayString
-        let font = NSFont.systemFont(ofSize: 13)
-        let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: NSColor.labelColor]
-        let size = text.size(withAttributes: attrs)
-        let point = NSPoint(x: (bounds.width - size.width) / 2, y: (bounds.height - size.height) / 2)
-        text.draw(at: point, withAttributes: attrs)
     }
-    
-    public override func mouseDown(with event: NSEvent) {
-        window?.makeFirstResponder(self)
-        isRecording = true
-    }
-    
-    public override func resignFirstResponder() -> Bool {
-        isRecording = false
-        return true
-    }
-    
+
     public override func keyDown(with event: NSEvent) {
         guard isRecording else {
             super.keyDown(with: event)
             return
         }
+
+        // Ignore modifier-only presses (Shift=56, Control=59, Option=58, Command=55)
+        if event.keyCode == 56 || event.keyCode == 59 || event.keyCode == 58 || event.keyCode == 55 {
+            return
+        }
+
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if flags.isEmpty || flags == .capsLock {
             NSSound.beep()
             return
         }
+
         let newShortcut = Shortcut(keyCode: event.keyCode, modifiers: flags.rawValue)
-        self.shortcut = newShortcut
-        onShortcutChanged?(newShortcut)
-        isRecording = false
-        window?.makeFirstResponder(nil)
+        onRecord?(newShortcut)
     }
-    
-    // `string(for: shortcut)` was removed because `shortcut.displayString` is now universally available.
 }
+
+// MARK: - SettingsView
 
 public struct SettingsView: View {
     @AppStorage("defaultReminderMinutes") private var defaultMinutes = 10
     @AppStorage("useSystemNotifications") private var useSystemNotifications = false
-    
+
     @Binding public var currentShortcut: Shortcut
     @State private var isRecording = false
-    
+
     public init(shortcut: Binding<Shortcut>) {
         self._currentShortcut = shortcut
     }
-    
+
     public var body: some View {
         Form {
-            // Fix 4 — GroupBox with uppercase caption label
             Section(header: Text("General")) {
                 GroupBox(label: Text("GENERAL").font(.caption2).foregroundStyle(.secondary)) {
                     VStack(alignment: .leading, spacing: 12) {
-                        // Fix 2 — ShortcutRecorder constrained width
-                        HStack {
-                            Text("Global hotkey")
-                            Spacer()
-                            ShortcutRecorder(shortcut: $currentShortcut, onRecordingChanged: { rec in
-                                isRecording = rec
-                            })
-                            .frame(width: 180, height: 28)
+
+                        // MARK: Shortcut row
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 12) {
+                                Text("Global hotkey")
+
+                                Spacer()
+
+                                // Key badges
+                                HStack(spacing: 4) {
+                                    let parts = currentShortcut.displayString.split(separator: " ")
+                                    ForEach(0..<parts.count, id: \.self) { i in
+                                        Text(String(parts[i]))
+                                            .font(.system(size: 13, weight: .medium, design: .monospaced))
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 5)
+                                            .background(
+                                                isRecording
+                                                    ? Color.accentColor.opacity(0.15)
+                                                    : Color(NSColor.controlBackgroundColor)
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 6)
+                                                    .stroke(
+                                                        isRecording ? Color.accentColor : Color.gray.opacity(0.3),
+                                                        lineWidth: 1
+                                                    )
+                                            )
+                                            .cornerRadius(6)
+                                    }
+                                }
+
+                                Button(isRecording ? "Cancel" : "Change") {
+                                    isRecording.toggle()
+                                }
+                                .buttonStyle(.bordered)
+                            }
+
+                            if isRecording {
+                                Text("Press your new shortcut…")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.accentColor)
+                                    .transition(.opacity)
+                            }
                         }
-                        
+                        .animation(.easeInOut(duration: 0.15), value: isRecording)
+                        .onChange(of: isRecording) { _, recording in
+                            NotificationCenter.default.post(
+                                name: recording
+                                    ? Notification.Name("HotkeyRecordingBegan")
+                                    : Notification.Name("HotkeyRecordingEnded"),
+                                object: nil
+                            )
+                        }
+
                         Divider()
-                        
-                        // Fix 1 — Manual HStack for Stepper
+
+                        // MARK: Default duration
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Default reminder duration")
@@ -130,9 +155,10 @@ public struct SettingsView: View {
                             Stepper("", value: $defaultMinutes, in: 1...120)
                                 .labelsHidden()
                         }
-                        
+
                         Divider()
-                        
+
+                        // MARK: Launch at Login
                         Toggle("Launch at Login", isOn: Binding(get: {
                             SMAppService.mainApp.status == .enabled
                         }, set: { newValue in
@@ -142,7 +168,7 @@ public struct SettingsView: View {
                                 try? SMAppService.mainApp.unregister()
                             }
                         }))
-                        
+
                         Toggle("Use System Notifications", isOn: $useSystemNotifications)
                     }
                     .padding(8)
@@ -151,6 +177,13 @@ public struct SettingsView: View {
             .padding(.bottom)
         }
         .padding()
-        .frame(width: 520, height: 340)
+        .frame(width: 520, height: 360)
+        // Buffer pattern: invisible KeyRecorder as .background() on the entire view
+        .background(
+            ShortcutRecorder(isRecording: $isRecording) { newShortcut in
+                currentShortcut = newShortcut
+                isRecording = false
+            }
+        )
     }
 }

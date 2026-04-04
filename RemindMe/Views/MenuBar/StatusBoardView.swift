@@ -151,14 +151,6 @@ public struct StatusBoardView: View {
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         NotificationCenter.default.post(name: NSNotification.Name("ClosePopoverOnly"), object: nil)
-                        
-                        for window in NSApp.windows where window.canBecomeMain || window.title == "Settings" || window.title == "RemindMe" {
-                            // Prevent AppKit crash if window is set to join all spaces
-                            window.collectionBehavior.remove(.canJoinAllSpaces)
-                            window.collectionBehavior.insert(.moveToActiveSpace)
-                            window.makeKeyAndOrderFront(nil)
-                            window.orderFrontRegardless()
-                        }
                     }
                 })
                 

@@ -62,6 +62,8 @@ public class MenuBarController {
         if let button = statusItem.button {
             NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            // Force the popover's window to become key so it immediately accepts keyboard input
+            popover.contentViewController?.view.window?.makeKey()
         }
     }
     

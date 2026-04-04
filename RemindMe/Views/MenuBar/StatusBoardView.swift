@@ -254,8 +254,17 @@ public struct TaskRowView: View {
                     }
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+                    )
                     .padding(.leading, 20)
-                    .padding(.top, 4)
+                    .padding(.top, 2)
                 }
             }
             .contentShape(Rectangle()) 
@@ -332,9 +341,9 @@ public struct CompletedTaskRowView: View {
                 }
             }
             
-            if isExpanded || task.snoozeCount > 0 {
+            if task.snoozeCount > 0 {
                 HStack(spacing: 6) {
-                    if task.snoozeCount > 0 { Text("Snoozed \(task.snoozeCount)x") }
+                    Text("Snoozed \(task.snoozeCount)x")
                     let over = max(0, (task.completedAt ?? task.createdAt).timeIntervalSince(task.createdAt) - task.originalDuration)
                     if over >= 60 {
                         Text("• +\(formatMins(over)) over estimate")
@@ -346,6 +355,31 @@ public struct CompletedTaskRowView: View {
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(Color.secondary)
                 .padding(.leading, 20)
+            }
+            
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Created: \(formatTime(task.createdAt))")
+                    if task.snoozeCount > 0 {
+                        Text("Total extensions: +\(formatMins(task.totalSnoozeDelay))")
+                    }
+                    if let completedAt = task.completedAt {
+                        Text("Completed: \(formatTime(completedAt))")
+                    }
+                }
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+                .cornerRadius(6)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+                )
+                .padding(.leading, 20)
+                .padding(.top, 2)
             }
         }
         .contentShape(Rectangle())
@@ -359,5 +393,11 @@ public struct CompletedTaskRowView: View {
     private func formatMins(_ interval: TimeInterval) -> String {
         let mins = max(0, Int(interval) / 60)
         return mins < 60 ? "\(mins)m" : "\(mins / 60)h \(mins % 60)m"
+    }
+    
+    private func formatTime(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.timeStyle = .short
+        return f.string(from: date)
     }
 }

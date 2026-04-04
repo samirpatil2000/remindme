@@ -24,6 +24,28 @@ public struct CommandWindowView: View {
         }
         return recentStore.recentTimes.first
     }
+    
+    private var invalidTokenDetected: Bool {
+        guard !inputText.isEmpty, selectedDuration == nil else { return false }
+        let pattern = "(?:^|\\s)(@[^\\s]+)"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }
+        let matches = regex.matches(in: inputText, range: NSRange(inputText.startIndex..., in: inputText))
+        var sawAnyAt = false
+        var sawValidAt = false
+        
+        for match in matches {
+            sawAnyAt = true
+            let tokenNSRange = match.range(at: 1)
+            if let tokenRange = Range(tokenNSRange, in: inputText) {
+                let tokenStr = String(inputText[tokenRange])
+                if TimeToken(fromString: tokenStr) != nil {
+                    sawValidAt = true
+                    break
+                }
+            }
+        }
+        return sawAnyAt && !sawValidAt
+    }
 
     public var onSubmit: (String, TimeInterval?) -> Void
     public var onEscape: () -> Void
@@ -87,6 +109,9 @@ public struct CommandWindowView: View {
                                 }
                             }
                             .transition(.scale(scale: 0.95).combined(with: .opacity))
+                        } else if invalidTokenDetected {
+                            WarningChip()
+                                .transition(.opacity)
                         } else if let suggestion = suggestedDuration {
                             SuggestedTimeChip(duration: suggestion) {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -349,5 +374,32 @@ private struct SuggestedTimeChip: View {
         if m == 0 && s > 0 { return "\(s)s" }
         if s > 0 { return "\(m)m \(s)s" }
         return "\(m) min"
+    }
+}
+
+private struct WarningChip: View {
+    @State private var isHovering = false
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 11, weight: .medium))
+                
+            if isHovering {
+                Text("Invalid time")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+            }
+        }
+        .padding(.horizontal, isHovering ? 8 : 6)
+        .padding(.vertical, 4)
+        .foregroundColor(Color(nsColor: .systemOrange))
+        .background(Color(nsColor: .systemOrange).opacity(0.15))
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color(nsColor: .systemOrange).opacity(0.3), lineWidth: 1)
+        )
+        .cornerRadius(6)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovering)
+        .onHover { isHovering = $0 }
     }
 }

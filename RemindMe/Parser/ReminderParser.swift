@@ -21,28 +21,21 @@ public struct ReminderParser {
         
         var validTokenRange: NSRange?
         var validDuration: TimeInterval?
-        var sawAnyAt = false
-        var sawValidAt = false
         
         for match in matches {
-            sawAnyAt = true
             let tokenNSRange = match.range(at: 1)
             guard let tokenRange = Range(tokenNSRange, in: trimmedInput) else { continue }
             
             let tokenStr = String(trimmedInput[tokenRange])
             
             if let token = TimeToken(fromString: tokenStr) {
-                sawValidAt = true
                 validTokenRange = match.range(at: 0) // The full match including the leading space if any
                 validDuration = token.duration
                 break
             }
         }
         
-        if sawAnyAt && !sawValidAt {
-            return .failure(.invalidToken)
-        }
-        
+
         let finalDuration = validDuration ?? 600 // Default 10 minutes
         let fireDate = now().addingTimeInterval(finalDuration)
         

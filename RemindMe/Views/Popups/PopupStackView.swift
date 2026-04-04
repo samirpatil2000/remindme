@@ -7,7 +7,6 @@ public struct PopupStackView: View {
     public let onSnooze: (Int) -> Void
     public let onStillRunning: () -> Void
     @State private var isDismissing = false
-    @State private var showSnooze = false
 
     public init(title: String, onDone: @escaping () -> Void, onSnooze: @escaping (Int) -> Void, onStillRunning: @escaping () -> Void) {
         self.title = title
@@ -44,28 +43,23 @@ public struct PopupStackView: View {
                     .buttonStyle(PopupPrimaryActionButtonStyle())
 
                     Button {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            showSnooze.toggle()
-                        }
+                        dismissWithAnimation(onStillRunning)
                     } label: {
-                        Text(showSnooze ? "Snooze" : "Still Running")
+                        Text("Still Running (10m)")
                     }
                     .buttonStyle(PopupSecondaryActionButtonStyle())
                 }
                 .disabled(isDismissing)
 
-                // Snooze row — revealed after "Still Running"
-                if showSnooze {
-                    HStack(spacing: 7) {
-                        ForEach([2, 5, 15, 60], id: \.self) { mins in
-                            SnoozeChip(label: mins < 60 ? "\(mins)m" : "1h") {
-                                dismissWithAnimation { onSnooze(mins) }
-                            }
+                // Snooze row — always visible
+                HStack(spacing: 7) {
+                    ForEach([2, 5, 15, 60], id: \.self) { mins in
+                        SnoozeChip(label: mins < 60 ? "\(mins)m" : "1h") {
+                            dismissWithAnimation { onSnooze(mins) }
                         }
-
-                        Spacer()
                     }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+
+                    Spacer()
                 }
             }
             .padding(.horizontal, 20)

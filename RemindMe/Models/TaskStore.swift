@@ -39,16 +39,23 @@ public class TaskStore: ObservableObject {
     public func markDone(id: UUID) {
         if let index = tasks.firstIndex(where: { $0.id == id }) {
             tasks[index].state = .done
+            tasks[index].completedAt = now()
             save()
         }
     }
     
     public func markStillRunning(id: UUID, newFiresAt: Date) {
         if let index = tasks.firstIndex(where: { $0.id == id }) {
+            let oldFiresAt = tasks[index].reminderFiresAt
+            let delayDiff = newFiresAt.timeIntervalSince(oldFiresAt)
+            let addedDelay = max(0, delayDiff)
+            
             tasks[index].state = .stillRunning
             tasks[index].reminderFiresAt = newFiresAt
             tasks[index].reminderFired = false
             tasks[index].reminderFiredAt = nil
+            tasks[index].snoozeCount += 1
+            tasks[index].totalSnoozeDelay += addedDelay
             save()
         }
     }
@@ -82,9 +89,15 @@ public class TaskStore: ObservableObject {
     }
     
     private func load() {
-        if let data = defaults.data(forKey: userDefaultsKey),
-           let decoded = try? JSONDecoder().decode([ReminderTask].self, from: data) {
-            self.tasks = decoded
+        if let data = defaults.data(forKey: userDefaultsKey) {
+            do {
+                let decoded = try JSONDecoder().decode([ReminderTask].self, from: data)
+                self.tasks = decoded
+            } catch {
+                print("Schema change detected or corrupt data. Erasing previous TaskStore.")
+                self.tasks = []
+                save()
+            }
         }
     }
     

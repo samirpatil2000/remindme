@@ -51,33 +51,42 @@ public struct StatusBoardView: View {
                                 task.state == .done && Calendar.current.isDate(task.createdAt, inSameDayAs: taskStore.now())
                             }
                             
-                            VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 14) {
                                 ForEach(doneToday) { task in
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundStyle(Color.green.opacity(0.8))
-                                            .font(.system(size: 12))
-                                        Text(task.title)
-                                            .font(.body)
-                                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
-                                            .strikethrough()
-                                    }
+                                    CompletedTaskRowView(task: task)
+                                        .transition(.opacity.combined(with: .move(edge: .top)))
                                 }
                             }
-                            .padding(.top, 8)
+                            .padding(.top, 12)
                             .padding(.bottom, 4)
                             .padding(.leading, 4)
                         } label: {
-                            Text("\(taskStore.completedToday) completed today")
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                            let doneToday = taskStore.tasks.filter { task in
+                                task.state == .done && Calendar.current.isDate(task.createdAt, inSameDayAs: taskStore.now())
+                            }
+                            let totalFocus = doneToday.compactMap { $0.completedAt?.timeIntervalSince($0.createdAt) ?? 0 }.reduce(0, +)
+                            let totalSnoozes = doneToday.compactMap { $0.snoozeCount }.reduce(0, +)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("\(taskStore.completedToday) completed today")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                                HStack(spacing: 6) {
+                                    Text("Focus time: \(formatAggregateMins(totalFocus))")
+                                    if totalSnoozes > 0 { Text("• Snoozes: \(totalSnoozes)") }
+                                }
+                                .font(.system(size: 11))
+                                .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                            }
                         }
                         .accentColor(Color(nsColor: .secondaryLabelColor))
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showCompleted)
                     }
                 }
                 .padding(.vertical, 12)
+                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: taskStore.tasks)
             }
         }
         .frame(width: 340, height: activeAndPastDueTasks.isEmpty && taskStore.completedToday == 0 ? 180 : 400, alignment: .top)
@@ -156,61 +165,87 @@ public struct StatusBoardView: View {
         if mins < 60 { return "\(mins)m" }
         return "\(mins / 60)h \(mins % 60)m"
     }
+    
+    private func formatAggregateMins(_ interval: TimeInterval) -> String {
+        let mins = Int(interval) / 60
+        return mins < 60 ? "\(mins)m" : "\(mins / 60)h \(mins % 60)m"
+    }
 }
 
 public struct TaskRowView: View {
     public let task: ReminderTask
     @ObservedObject public var store: TaskStore
     @State private var isHovering = false
+    @State private var isExpanded = false
     
     public var body: some View {
         TimelineView(.periodic(from: Date(), by: 1.0)) { context in
-            HStack(spacing: 12) {
-                // Status Dot
-                Circle()
-                    .fill(task.state == .pastDue ? Color.orange : Color.green)
-                    .frame(width: 8, height: 8)
-                
-                Text(task.title)
-                    .font(.system(.body, design: .rounded).weight(.medium))
-                    .foregroundStyle(Color(nsColor: .labelColor))
-                    .lineLimit(1)
-                
-                Spacer(minLength: 16)
-                
-                if isHovering {
-                    HStack(spacing: 12) {
-                        Button {
-                            store.markStillRunning(id: task.id, newFiresAt: store.now().addingTimeInterval(300))
-                        } label: {
-                            Image(systemName: "moon.fill")
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(task.state == .pastDue ? Color.orange : Color.green)
+                        .frame(width: 8, height: 8)
+                    
+                    Text(task.title)
+                        .font(.system(.body, design: .rounded).weight(.medium))
+                        .foregroundStyle(Color(nsColor: .labelColor))
+                        .lineLimit(1)
+                    
+                    Spacer(minLength: 16)
+                    
+                    if isHovering {
+                        HStack(spacing: 12) {
+                            Button {
+                                store.markStillRunning(id: task.id, newFiresAt: store.now().addingTimeInterval(300))
+                            } label: {
+                                Image(systemName: "moon.fill")
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(.secondary)
+                            .help("Snooze 5m")
+                            
+                            Button {
+                                store.markDone(id: task.id)
+                            } label: {
+                                Image(systemName: "checkmark")
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Color.green)
+                            .help("Done")
                         }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.secondary)
-                        .help("Snooze 5m")
-                        
-                        Button {
-                            store.markStillRunning(id: task.id, newFiresAt: store.now().addingTimeInterval(600))
-                        } label: {
-                            Image(systemName: "arrow.clockwise")
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                        .help("Still Running (10m)")
-                        
-                        Button {
-                            store.markDone(id: task.id)
-                        } label: {
-                            Image(systemName: "checkmark")
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(Color.green)
-                        .help("Done")
+                    } else {
+                        Text(timeText(for: task, now: context.date))
+                            .font(.system(.subheadline, design: .monospaced))
+                            .foregroundStyle(colorForTime(task))
                     }
-                } else {
-                    Text(timeText(for: task, now: context.date))
-                        .font(.system(.subheadline, design: .monospaced))
-                        .foregroundStyle(colorForTime(task))
+                }
+                
+                if task.snoozeCount > 0 || isHovering || isExpanded {
+                    HStack(spacing: 8) {
+                        Text("Estimated \(formatMins(task.originalDuration))")
+                        if task.snoozeCount > 0 {
+                            Text("• Snoozed \(task.snoozeCount)x")
+                            let added = task.totalSnoozeDelay
+                            if added > 0 { Text("• Delay +\(formatMins(added))") }
+                        }
+                    }
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundStyle(Color.secondary)
+                    .padding(.leading, 20)
+                }
+                
+                if isExpanded {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Created: \(formatTime(task.createdAt))")
+                        if task.snoozeCount > 0 {
+                            Text("Total extensions: +\(formatMins(task.totalSnoozeDelay))")
+                        }
+                        Text("Current target: \(formatTime(task.reminderFiresAt))")
+                    }
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                    .padding(.leading, 20)
+                    .padding(.top, 4)
                 }
             }
             .contentShape(Rectangle()) 
@@ -219,12 +254,30 @@ public struct TaskRowView: View {
                     isHovering = hover
                 }
             }
+            .onTapGesture {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isExpanded.toggle()
+                }
+            }
             .contextMenu {
+                // Secret debug to advance time or test logic would go here, we just use delete
                 Button("Delete") {
                     store.delete(id: task.id)
                 }
             }
         }
+    }
+    
+    // Time helpers
+    private func formatMins(_ interval: TimeInterval) -> String {
+        let mins = max(0, Int(interval) / 60)
+        return mins < 60 ? "\(mins)m" : "\(mins / 60)h \(mins % 60)m"
+    }
+    
+    private func formatTime(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.timeStyle = .short
+        return f.string(from: date)
     }
     
     private func timeText(for task: ReminderTask, now: Date) -> String {
@@ -240,5 +293,61 @@ public struct TaskRowView: View {
     private func colorForTime(_ task: ReminderTask) -> Color {
         if task.state == .pastDue { return .orange }
         return Color(nsColor: .secondaryLabelColor)
+    }
+}
+
+public struct CompletedTaskRowView: View {
+    public let task: ReminderTask
+    @State private var isExpanded = false
+    
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(Color.green.opacity(0.8))
+                    .font(.system(size: 12))
+                
+                Text(task.title)
+                    .font(.body)
+                    .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                    .strikethrough()
+                
+                Spacer()
+                
+                if let completedAt = task.completedAt {
+                    let diff = completedAt.timeIntervalSince(task.createdAt)
+                    Text("in \(formatMins(diff))")
+                        .font(.system(size: 11, weight: .regular))
+                        .foregroundStyle(Color.secondary)
+                }
+            }
+            
+            if isExpanded || task.snoozeCount > 0 {
+                HStack(spacing: 6) {
+                    if task.snoozeCount > 0 { Text("Snoozed \(task.snoozeCount)x") }
+                    let over = max(0, (task.completedAt ?? task.createdAt).timeIntervalSince(task.createdAt) - task.originalDuration)
+                    if over >= 60 {
+                        Text("• +\(formatMins(over)) over estimate")
+                    } else if over < 60 {
+                        Text("• Perfect timing ✓")
+                            .foregroundStyle(Color.green.opacity(0.8))
+                    }
+                }
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(Color.secondary)
+                .padding(.leading, 20)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                isExpanded.toggle()
+            }
+        }
+    }
+    
+    private func formatMins(_ interval: TimeInterval) -> String {
+        let mins = max(0, Int(interval) / 60)
+        return mins < 60 ? "\(mins)m" : "\(mins / 60)h \(mins % 60)m"
     }
 }

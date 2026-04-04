@@ -9,6 +9,12 @@ public struct ReminderTask: Identifiable, Codable, Equatable {
     public var reminderFired: Bool
     public var reminderFiredAt: Date?
     
+    // Lifecycle Intelligence
+    public var originalDuration: TimeInterval
+    public var snoozeCount: Int
+    public var totalSnoozeDelay: TimeInterval
+    public var completedAt: Date?
+    
     public init(
         id: UUID = UUID(),
         title: String,
@@ -16,7 +22,11 @@ public struct ReminderTask: Identifiable, Codable, Equatable {
         reminderFiresAt: Date,
         state: TaskState = .active,
         reminderFired: Bool = false,
-        reminderFiredAt: Date? = nil
+        reminderFiredAt: Date? = nil,
+        originalDuration: TimeInterval? = nil,
+        snoozeCount: Int = 0,
+        totalSnoozeDelay: TimeInterval = 0,
+        completedAt: Date? = nil
     ) {
         self.id = id
         self.title = title
@@ -25,5 +35,10 @@ public struct ReminderTask: Identifiable, Codable, Equatable {
         self.state = state
         self.reminderFired = reminderFired
         self.reminderFiredAt = reminderFiredAt
+        
+        self.originalDuration = originalDuration ?? reminderFiresAt.timeIntervalSince(createdAt)
+        self.snoozeCount = snoozeCount
+        self.totalSnoozeDelay = totalSnoozeDelay
+        self.completedAt = completedAt
     }
 }

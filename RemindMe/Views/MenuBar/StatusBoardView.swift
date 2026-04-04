@@ -138,7 +138,7 @@ public struct StatusBoardView: View {
                 .animation(.spring(response: 0.3, dampingFraction: 0.7), value: taskStore.tasks)
             }
         }
-        .frame(width: 340, height: activeAndPastDueTasks.isEmpty && taskStore.completedToday == 0 ? 180 : 400, alignment: .top)
+        .frame(width: 340, height: activeAndPastDueTasks.isEmpty && taskStore.completedToday == 0 ? 240 : 400, alignment: .top)
     }
     
     private var headerView: some View {

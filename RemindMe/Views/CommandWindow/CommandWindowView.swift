@@ -4,7 +4,8 @@ public struct CommandWindowView: View {
     @ObservedObject private var state: CommandWindowState
     @State private var inputText = ""
     @State private var showConfirmation = false
-    @State private var confirmationMessage = ""
+    @State private var confirmedTaskTitle = ""
+    @State private var confirmedTaskTime = ""
     @State private var window: NSWindow?
     @State private var hasFocusedCurrentPresentation = false
     @State private var hasAppliedInitialFocusDelay = false
@@ -14,6 +15,15 @@ public struct CommandWindowView: View {
     @State private var showTimePicker = false
     @StateObject private var recentStore = RecentTimesStore()
     @State private var isHoveringClock = false
+    @State private var suppressSuggestion = false
+    
+    private var suggestedDuration: TimeInterval? {
+        let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty || suppressSuggestion || selectedDuration != nil || inputText.contains("@") {
+            return nil
+        }
+        return recentStore.recentTimes.first
+    }
 
     public var onSubmit: (String, TimeInterval?) -> Void
     public var onEscape: () -> Void
@@ -30,10 +40,26 @@ public struct CommandWindowView: View {
         VStack(spacing: 0) {
             ZStack {
                 if showConfirmation {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 32, weight: .light))
-                        .foregroundStyle(Color.accentColor)
-                        .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    HStack(spacing: 12) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundStyle(Color.accentColor)
+                        
+                        HStack(spacing: 6) {
+                            Text(confirmedTaskTitle)
+                                .font(.system(size: 20, weight: .regular, design: .rounded))
+                                .foregroundStyle(Color.primary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                            
+                            if !confirmedTaskTime.isEmpty {
+                                Text(confirmedTaskTime)
+                                    .font(.system(size: 18, weight: .light, design: .rounded))
+                                    .foregroundStyle(Color.secondary)
+                            }
+                        }
+                    }
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
                 } else {
                     HStack(spacing: 16) {
                         Image(systemName: "magnifyingglass")
@@ -44,18 +70,33 @@ public struct CommandWindowView: View {
                             .font(.system(size: 28, weight: .ultraLight, design: .rounded))
                             .textFieldStyle(.plain)
                             .focused($isInputFocused)
+                            .onChange(of: inputText) { _, newValue in
+                                if newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    suppressSuggestion = false
+                                }
+                            }
                             .onSubmit {
                                 submitTask()
                             }
                         
                         if let duration = selectedDuration {
                             TimeChip(duration: duration) {
-                                withAnimation { selectedDuration = nil }
+                                withAnimation {
+                                    selectedDuration = nil
+                                    suppressSuggestion = true
+                                }
                             }
                             .transition(.scale(scale: 0.95).combined(with: .opacity))
+                        } else if let suggestion = suggestedDuration {
+                            SuggestedTimeChip(duration: suggestion) {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    selectedDuration = suggestion
+                                }
+                            }
+                            .transition(.opacity)
                         }
                         
-                        if inputText.isEmpty && selectedDuration == nil {
+                        if inputText.isEmpty && selectedDuration == nil && suggestedDuration == nil {
                             // Keyboard shortcut hint
                             HStack(spacing: 4) {
                                 let parts = state.shortcutHint.split(separator: " ")
@@ -138,19 +179,36 @@ public struct CommandWindowView: View {
     private func submitTask() {
         let text = inputText
         if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            let duration = selectedDuration
+            let duration = selectedDuration ?? suggestedDuration
             onSubmit(text, duration)
             if let d = duration { recentStore.add(d) }
             
+            var savedTitle = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            var finalDuration = duration
+            
+            if duration == nil {
+                if case .success(let payload) = ReminderParser.parse(text) {
+                    savedTitle = payload.title
+                    finalDuration = round(payload.firesAt.timeIntervalSinceNow)
+                }
+            }
+            
             withAnimation(.easeIn(duration: 0.15)) {
-                confirmationMessage = "Saved: \(text)"
+                confirmedTaskTitle = savedTitle
+                if let dur = finalDuration, dur > 0 {
+                    confirmedTaskTime = "in \(formatDetailedDuration(dur))"
+                } else {
+                    confirmedTaskTime = ""
+                }
+                
                 showConfirmation = true
                 if showTimePicker { togglePicker() }
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 onEscape()
                 inputText = ""
                 selectedDuration = nil
+                suppressSuggestion = false
                 showConfirmation = false
             }
         }
@@ -172,6 +230,19 @@ public struct CommandWindowView: View {
         if h > 0 { parts.append("\(h)h") }
         if m > 0 || h == 0 { parts.append("\(m)m") }
         if s > 0 { parts.append("\(s)s") }
+        
+        return parts.joined(separator: " ")
+    }
+    
+    private func formatDetailedDuration(_ interval: TimeInterval) -> String {
+        let h = Int(interval) / 3600
+        let m = (Int(interval) % 3600) / 60
+        let s = Int(interval) % 60
+        
+        var parts = [String]()
+        if h == 1 { parts.append("1 hour") } else if h > 1 { parts.append("\(h) hours") }
+        if m == 1 { parts.append("1 minute") } else if m > 1 { parts.append("\(m) minutes") }
+        if s == 1 { parts.append("1 second") } else if s > 1 { parts.append("\(s) seconds") }
         
         return parts.joined(separator: " ")
     }
@@ -239,5 +310,44 @@ private struct TimeChip: View {
         if m == 0 && s > 0 { return "\(s)s" }
         if s > 0 { return "\(m)m \(s)s" }
         return "\(m)m"
+    }
+}
+
+private struct SuggestedTimeChip: View {
+    let duration: TimeInterval
+    let onConfirm: () -> Void
+    @State private var isHovering = false
+    
+    var body: some View {
+        Button(action: onConfirm) {
+            HStack(spacing: 4) {
+                Text("in \(formatTimeInterval(duration))")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .foregroundColor(.secondary)
+            .background(Color.secondary.opacity(isHovering ? 0.2 : 0.1))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Color.secondary.opacity(0.15), lineWidth: 1)
+            )
+            .cornerRadius(6)
+            .animation(.easeOut(duration: 0.1), value: isHovering)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+    }
+    
+    private func formatTimeInterval(_ interval: TimeInterval) -> String {
+        let h = Int(interval) / 3600
+        let m = (Int(interval) % 3600) / 60
+        let s = Int(interval) % 60
+        
+        if h > 0 && m == 0 { return "\(h)h" }
+        if h > 0 && m > 0 { return "\(h)h \(m)m" }
+        if m == 0 && s > 0 { return "\(s)s" }
+        if s > 0 { return "\(m)m \(s)s" }
+        return "\(m) min"
     }
 }

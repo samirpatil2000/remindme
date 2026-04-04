@@ -56,7 +56,7 @@ public struct PopupStackView: View {
                         .font(.caption)
                         .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
 
-                    ForEach([5, 15, 60], id: \.self) { mins in
+                    ForEach([2, 5, 15, 60], id: \.self) { mins in
                         SnoozeChip(label: mins < 60 ? "\(mins)m" : "1h") {
                             onSnooze(mins)
                         }

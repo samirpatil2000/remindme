@@ -82,6 +82,11 @@ public class TaskStore: ObservableObject {
         }
     }
     
+    public func clearCompleted() {
+        tasks.removeAll { $0.state == .done }
+        save()
+    }
+    
     private func save() {
         if let encoded = try? JSONEncoder().encode(tasks) {
             defaults.set(encoded, forKey: userDefaultsKey)

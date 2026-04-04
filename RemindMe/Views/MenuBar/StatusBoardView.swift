@@ -4,6 +4,7 @@ import AppKit
 public struct StatusBoardView: View {
     @ObservedObject var taskStore: TaskStore
     @State private var showCompleted = false
+    @State private var isHoveringCompletedHeader = false
     
     public init(taskStore: TaskStore) {
         self.taskStore = taskStore
@@ -53,37 +54,54 @@ public struct StatusBoardView: View {
                         let totalSnoozes = doneToday.compactMap { $0.snoozeCount }.reduce(0, +)
                         
                         VStack(alignment: .leading, spacing: 0) {
-                            Button {
+                            HStack(spacing: 8) {
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .rotationEffect(.degrees(showCompleted ? 90 : 0))
+                                    .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                    .frame(width: 14, height: 14)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("\(taskStore.completedToday) completed today")
+                                        .font(.subheadline.weight(.medium))
+                                        .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                                    
+                                    HStack(spacing: 6) {
+                                        Text("Focus time: \(formatAggregateMins(totalFocus))")
+                                        if totalSnoozes > 0 { Text("• Snoozes: \(totalSnoozes)") }
+                                    }
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                }
+                                
+                                Spacer()
+                                
+                                Button("Clear") {
+                                    withAnimation {
+                                        taskStore.clearCompleted()
+                                    }
+                                }
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(Color.secondary)
+                                .buttonStyle(.plain)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color(NSColor.controlBackgroundColor).opacity(isHoveringCompletedHeader ? 0.8 : 0))
+                                .cornerRadius(4)
+                                .opacity(isHoveringCompletedHeader ? 1 : 0)
+                            }
+                            .padding(.vertical, 6)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                     showCompleted.toggle()
                                 }
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 10, weight: .bold))
-                                        .rotationEffect(.degrees(showCompleted ? 90 : 0))
-                                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
-                                        .frame(width: 14, height: 14)
-                                    
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("\(taskStore.completedToday) completed today")
-                                            .font(.subheadline.weight(.medium))
-                                            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                                        
-                                        HStack(spacing: 6) {
-                                            Text("Focus time: \(formatAggregateMins(totalFocus))")
-                                            if totalSnoozes > 0 { Text("• Snoozes: \(totalSnoozes)") }
-                                        }
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
-                                    }
-                                    
-                                    Spacer()
-                                }
-                                .padding(.vertical, 6)
-                                .contentShape(Rectangle())
                             }
-                            .buttonStyle(.plain)
+                            .onHover { hover in
+                                withAnimation(.easeInOut(duration: 0.15)) {
+                                    isHoveringCompletedHeader = hover
+                                }
+                            }
                             .padding(.horizontal, 16)
                             .padding(.top, 4)
                             

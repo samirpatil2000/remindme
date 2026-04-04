@@ -84,9 +84,7 @@ public struct CommandWindowView: View {
                     .transition(.scale(scale: 0.95).combined(with: .opacity))
                 } else {
                     HStack(spacing: 16) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 28, weight: .ultraLight, design: .rounded))
-                            .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+
                         
                         TextField("Remind me to... @5m", text: $inputText)
                             .font(.system(size: 28, weight: .ultraLight, design: .rounded))

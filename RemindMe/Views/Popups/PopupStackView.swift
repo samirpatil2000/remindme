@@ -75,7 +75,9 @@ public struct PopupStackView: View {
         .frame(width: 380)
         .background(Color.clear)
         .scaleEffect(isDismissing ? 0.96 : 1.0)
+        .offset(y: isDismissing ? 6 : 0)
         .opacity(isDismissing ? 0 : 1)
+        .animation(.easeIn(duration: 0.25), value: isDismissing)
     }
 
     private func timeAgoString(from date: Date, to now: Date) -> String {
@@ -89,12 +91,12 @@ public struct PopupStackView: View {
     private func dismissWithAnimation(_ action: @escaping () -> Void) {
         guard !isDismissing else { return }
 
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+        withAnimation(.easeIn(duration: 0.25)) {
             isDismissing = true
         }
 
         Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(180))
+            try? await Task.sleep(for: .milliseconds(250))
             action()
         }
     }

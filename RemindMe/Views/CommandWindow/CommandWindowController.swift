@@ -124,13 +124,22 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         if window.alphaValue == 0 { return }
         
         isAnimating = true
+        
+        // Drift upward slightly while scaling down and fading — feels like the window lifts away
+        var frame = window.frame
+        frame.origin.y += 8
+        
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.15
+            context.duration = 0.25
+            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 1.0, 1.0)
             window.animator().alphaValue = 0.0
-            window.contentView?.animator().layer?.transform = CATransform3DMakeScale(0.95, 0.95, 1.0)
+            window.animator().setFrame(frame, display: false)
+            window.contentView?.animator().layer?.transform = CATransform3DMakeScale(0.97, 0.97, 1.0)
         }) {
             Task { @MainActor in
                 window.orderOut(nil)
+                // Reset transform for next show
+                window.contentView?.layer?.transform = CATransform3DIdentity
                 self.isAnimating = false
             }
         }

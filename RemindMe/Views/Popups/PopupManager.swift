@@ -177,11 +177,16 @@ public class PopupManager: ObservableObject {
             return
         }
         
+        // Drift downward while fading and scaling — feels like the card falls away with gravity
+        var frame = panel.frame
+        frame.origin.y -= 12
+        
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.2
-            context.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            context.duration = 0.3
+            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 1.0, 1.0)
             panel.animator().alphaValue = 0
-            panel.contentView?.animator().layer?.transform = CATransform3DMakeScale(0.95, 0.95, 1.0)
+            panel.animator().setFrame(frame, display: false)
+            panel.contentView?.animator().layer?.transform = CATransform3DMakeScale(0.94, 0.94, 1.0)
         }) {
             Task { @MainActor in
                 completion()

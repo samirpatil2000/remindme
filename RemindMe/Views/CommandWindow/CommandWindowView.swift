@@ -230,11 +230,15 @@ public struct CommandWindowView: View {
                 if showTimePicker { togglePicker() }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                // Hide the window first — keeps the checkmark visible during the fade-out
                 onEscape()
-                inputText = ""
-                selectedDuration = nil
-                suppressSuggestion = false
-                showConfirmation = false
+                // Reset state after the window is fully gone
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    inputText = ""
+                    selectedDuration = nil
+                    suppressSuggestion = false
+                    showConfirmation = false
+                }
             }
         }
     }

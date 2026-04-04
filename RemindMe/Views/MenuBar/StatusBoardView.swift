@@ -46,42 +46,60 @@ public struct StatusBoardView: View {
                         Divider()
                             .padding(.top, 4)
                         
-                        DisclosureGroup(isExpanded: $showCompleted) {
-                            let doneToday = taskStore.tasks.filter { task in
-                                task.state == .done && Calendar.current.isDate(task.createdAt, inSameDayAs: taskStore.now())
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 14) {
-                                ForEach(doneToday) { task in
-                                    CompletedTaskRowView(task: task)
-                                        .transition(.opacity.combined(with: .move(edge: .top)))
+                        let doneToday = taskStore.tasks.filter { task in
+                            task.state == .done && Calendar.current.isDate(task.createdAt, inSameDayAs: taskStore.now())
+                        }
+                        let totalFocus = doneToday.compactMap { $0.completedAt?.timeIntervalSince($0.createdAt) ?? 0 }.reduce(0, +)
+                        let totalSnoozes = doneToday.compactMap { $0.snoozeCount }.reduce(0, +)
+                        
+                        VStack(alignment: .leading, spacing: 0) {
+                            Button {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    showCompleted.toggle()
                                 }
-                            }
-                            .padding(.top, 12)
-                            .padding(.bottom, 4)
-                            .padding(.leading, 4)
-                        } label: {
-                            let doneToday = taskStore.tasks.filter { task in
-                                task.state == .done && Calendar.current.isDate(task.createdAt, inSameDayAs: taskStore.now())
-                            }
-                            let totalFocus = doneToday.compactMap { $0.completedAt?.timeIntervalSince($0.createdAt) ?? 0 }.reduce(0, +)
-                            let totalSnoozes = doneToday.compactMap { $0.snoozeCount }.reduce(0, +)
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("\(taskStore.completedToday) completed today")
-                                    .font(.subheadline.weight(.medium))
-                                    .foregroundStyle(Color(nsColor: .secondaryLabelColor))
-                                HStack(spacing: 6) {
-                                    Text("Focus time: \(formatAggregateMins(totalFocus))")
-                                    if totalSnoozes > 0 { Text("• Snoozes: \(totalSnoozes)") }
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .rotationEffect(.degrees(showCompleted ? 90 : 0))
+                                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                        .frame(width: 14, height: 14)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("\(taskStore.completedToday) completed today")
+                                            .font(.subheadline.weight(.medium))
+                                            .foregroundStyle(Color(nsColor: .secondaryLabelColor))
+                                        
+                                        HStack(spacing: 6) {
+                                            Text("Focus time: \(formatAggregateMins(totalFocus))")
+                                            if totalSnoozes > 0 { Text("• Snoozes: \(totalSnoozes)") }
+                                        }
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                    }
+                                    
+                                    Spacer()
                                 }
-                                .font(.system(size: 11))
-                                .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                                .padding(.vertical, 6)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 4)
+                            
+                            if showCompleted {
+                                VStack(alignment: .leading, spacing: 14) {
+                                    ForEach(doneToday) { task in
+                                        CompletedTaskRowView(task: task)
+                                            .transition(.opacity.combined(with: .move(edge: .top)))
+                                    }
+                                }
+                                .padding(.top, 12)
+                                .padding(.bottom, 8)
+                                .padding(.leading, 38)
+                                .padding(.trailing, 16)
                             }
                         }
-                        .accentColor(Color(nsColor: .secondaryLabelColor))
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
                         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showCompleted)
                     }
                 }

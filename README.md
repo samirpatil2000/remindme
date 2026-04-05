@@ -22,8 +22,11 @@
 ### ✨ Why RemindMe?
 - **Ultra-lightweight** — Built with SwiftUI for modern macOS performance, minimal RAM/CPU usage.
 - **Natural Language Parsing** — Set reminders with ease using tokens like `@1m`, `@10m`, `@1h`.
-- **Global Hotkey** — Press `⌘⇧Space` to instantly bring up the reminder command window from anywhere.
-- **Todoist-inspired Design** — Clean, aesthetic, and functional interface that feels right at home on macOS.
+- **Time Intelligence** — Quick-select custom durations with smart suggestions, validation warnings, and an improved confirmation flow.
+- **Focus Analytics** — Track your productivity with aggregate focus time and snooze counts natively in the Status Board.
+- **Global Hotkey** — Use a customizable global shortcut to instantly bring up the command window from anywhere.
+- **Todoist-inspired Design** — Clean, functional interface, beautiful hover-reveal UI for completed tasks, and elegant popovers.
+- **Auto Launch** — Enable launch at login so your reminder system is always ready when you are.
 - **Privacy First** — Everything stays on your Mac, no cloud syncing, no data tracking.
 - **Native Experience** — Deeply integrated with macOS notifications and menu bar tools.
 

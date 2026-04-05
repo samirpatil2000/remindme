@@ -22,7 +22,7 @@
 ### ✨ Why RemindMe?
 - **Ultra-lightweight** — Built with SwiftUI for modern macOS performance, minimal RAM/CPU usage.
 - **Natural Language Parsing** — Set reminders with ease using tokens like `@1m`, `@10m`, `@1h`.
-- **Time Intelligence** — Quick-select custom durations with smart suggestions, validation warnings, and an improved confirmation flow.
+- **Dual Input Modes** — Type your time to get smart suggestions, or select custom durations directly from an elegant visual TimePicker UI.
 - **Focus Analytics** — Track your productivity with aggregate focus time and snooze counts natively in the Status Board.
 - **Global Hotkey** — Use a customizable global shortcut to instantly bring up the command window from anywhere.
 - **Todoist-inspired Design** — Clean, functional interface, beautiful hover-reveal UI for completed tasks, and elegant popovers.

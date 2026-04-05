@@ -69,14 +69,14 @@ public struct CommandWindowView: View {
                         
                         HStack(spacing: 6) {
                             Text(confirmedTaskTitle)
-                                .font(.system(size: 20, weight: .regular, design: .rounded))
+                                .font(.system(size: 20, weight: .regular))
                                 .foregroundStyle(Color.primary)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
-                            
+
                             if !confirmedTaskTime.isEmpty {
                                 Text(confirmedTaskTime)
-                                    .font(.system(size: 18, weight: .light, design: .rounded))
+                                    .font(.system(size: 18, weight: .light))
                                     .foregroundStyle(Color.secondary)
                             }
                         }
@@ -87,7 +87,7 @@ public struct CommandWindowView: View {
 
                         
                         TextField("Remind me to... @5m", text: $inputText)
-                            .font(.system(size: 28, weight: .ultraLight, design: .rounded))
+                            .font(.system(size: 20, weight: .light))
                             .textFieldStyle(.plain)
                             .focused($isInputFocused)
                             .onChange(of: inputText) { _, newValue in

@@ -90,9 +90,8 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
 
         if let screen = NSScreen.main {
             let x = screen.visibleFrame.midX - (560 / 2)
-            // Golden ratio-ish: position slightly above center — start 14pt below and drift up
             let y = screen.visibleFrame.midY + (screen.visibleFrame.height * 0.15)
-            window.setFrame(NSRect(x: x, y: y - 14, width: 560, height: 72), display: false)
+            window.setFrame(NSRect(x: x, y: y, width: 560, height: 72), display: false)
         } else {
             window.center()
         }
@@ -106,29 +105,20 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         isAnimating = true
         window.alphaValue = 0
 
-        // Spring bloom: scale 0.92 → 1.0 with natural overshoot (liquid expansion feel)
         if let layer = window.contentView?.layer {
-            layer.transform = CATransform3DIdentity  // model layer = final state
-            let springAnim = CASpringAnimation(keyPath: "transform")
-            springAnim.fromValue = CATransform3DMakeScale(0.92, 0.92, 1.0)
-            springAnim.toValue = CATransform3DIdentity
-            springAnim.mass = 1.0
-            springAnim.stiffness = 320
-            springAnim.damping = 18
-            springAnim.initialVelocity = 1.5
-            springAnim.duration = springAnim.settlingDuration
-            layer.add(springAnim, forKey: "bloomIn")
+            layer.transform = CATransform3DIdentity
+            let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+            scaleAnimation.fromValue = 0.97
+            scaleAnimation.toValue = 1.0
+            scaleAnimation.duration = 0.15
+            scaleAnimation.timingFunction = CAMediaTimingFunction(controlPoints: 0.0, 0.0, 0.2, 1.0)
+            layer.add(scaleAnimation, forKey: "bloomIn")
         }
 
-        // Fade in + drift up 14pt with easeOut
-        var targetFrame = window.frame
-        targetFrame.origin.y += 14
-
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.28
-            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            context.duration = 0.15
+            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.0, 0.0, 0.2, 1.0)
             window.animator().alphaValue = 1.0
-            window.animator().setFrame(targetFrame, display: false)
         }) {
             Task { @MainActor in
                 self.isAnimating = false
@@ -142,15 +132,10 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
 
         isAnimating = true
 
-        // Drift upward slightly while scaling down and fading — feels like the window lifts away
-        var frame = window.frame
-        frame.origin.y += 8
-
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.25
+            context.duration = 0.12
             context.timingFunction = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 1.0, 1.0)
             window.animator().alphaValue = 0.0
-            window.animator().setFrame(frame, display: false)
             window.contentView?.animator().layer?.transform = CATransform3DMakeScale(0.97, 0.97, 1.0)
         }) {
             Task { @MainActor in
@@ -194,8 +179,8 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         currentFrame.size.height = newHeight
         
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.3
-            context.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+            context.duration = 0.2
+            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.0, 0.0, 0.2, 1.0)
             window.animator().setFrame(currentFrame, display: true)
         }
     }

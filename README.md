@@ -70,25 +70,41 @@
 
 ## Screenshots 
 
-1. Quick Reminder Entry with Smart Time Suggestion
-
-<img width="593" height="95" alt="Screenshot 2026-04-05 at 13 52 31" src="https://github.com/user-attachments/assets/b1d92e4c-f5ad-45a5-b16c-ce893cf2631f" />
-
-2. Natural Language Input with @ Time Tokens
-
-<img width="591" height="96" alt="Screenshot 2026-04-05 at 14 01 07" src="https://github.com/user-attachments/assets/ea8a85fe-f4fc-4584-8713-33c2abc5ae8d" />
-
-3. Visual TimePicker for Custom Durations
-
-<img width="598" height="241" alt="Screenshot 2026-04-05 at 13 52 54" src="https://github.com/user-attachments/assets/beb0d90f-93cc-423c-9aae-db9b0e4e83bb" />
-
-4. Status Board: All Clear & Focus Summary
-<img width="383" height="452" alt="Screenshot 2026-04-05 at 13 53 57" src="https://github.com/user-attachments/assets/dc287118-4aa1-472f-a267-31d528d26fa1" />
-
-5. Actionable Reminder Notification with Snooze Options
-<img width="404" height="171" alt="Screenshot 2026-04-05 at 13 53 28" src="https://github.com/user-attachments/assets/c85e63f4-1ec0-4b52-899b-d8c129edc9c7" />
-
-
+<table>
+  <tr>
+    <td rowspan="4" valign="top">
+      <img src="https://github.com/user-attachments/assets/dc287118-4aa1-472f-a267-31d528d26fa1" alt="Status Board: All Clear & Focus Summary" width="380"/>
+      <br/>
+      <sup>status board — glance, don't manage</sup>
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/b1d92e4c-f5ad-45a5-b16c-ce893cf2631f" alt="Quick Reminder Entry with Smart Time Suggestion" width="560"/>
+      <br/>
+      <sup>type anything. smart default: 5 minutes.</sup>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/ea8a85fe-f4fc-4584-8713-33c2abc5ae8d" alt="Natural Language Input with @ Time Tokens" width="560"/>
+      <br/>
+      <sup>use <code>@10m</code> or <code>@1h</code> for precise timing</sup>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/beb0d90f-93cc-423c-9aae-db9b0e4e83bb" alt="Visual TimePicker for Custom Durations" width="560"/>
+      <br/>
+      <sup>or pick from presets. custom down to the second.</sup>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/c85e63f4-1ec0-4b52-899b-d8c129edc9c7" alt="Actionable Reminder Notification with Snooze Options" width="400"/>
+      <br/>
+      <sup>it fires. mark done, extend, or snooze.</sup>
+    </td>
+  </tr>
+</table>
 
 ## 🛠️ Building from Source
 

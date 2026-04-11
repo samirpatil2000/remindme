@@ -16,6 +16,9 @@ public struct CommandWindowView: View {
     @StateObject private var recentStore = RecentTimesStore()
     @State private var isHoveringClock = false
     @State private var suppressSuggestion = false
+    @State private var tabPressCount: Int = 0
+    @State private var recentIndex: Int = 0
+    @State private var hasUserOverriddenDuration: Bool = false
     
     private var suggestedDuration: TimeInterval? {
         let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -86,18 +89,33 @@ public struct CommandWindowView: View {
                     HStack(spacing: 16) {
 
                         
-                        TextField("Remind me to... @5m", text: $inputText)
-                            .font(.system(size: 20, weight: .light))
-                            .textFieldStyle(.plain)
-                            .focused($isInputFocused)
-                            .onChange(of: inputText) { _, newValue in
-                                if newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    suppressSuggestion = false
-                                }
-                            }
-                            .onSubmit {
-                                submitTask()
-                            }
+TextField("", text: $inputText)
+            .font(.system(size: 21, weight: .light))
+            .tracking(-0.2)
+            .textFieldStyle(.plain)
+            .foregroundStyle(Color.white.opacity(0.88))
+            .focused($isInputFocused)
+            .overlay(alignment: .leading) {
+                if inputText.isEmpty {
+                    Text("Remind me to...")
+                        .font(.system(size: 21, weight: .light))
+                        .tracking(-0.2)
+                        .foregroundStyle(Color.white.opacity(0.22))
+                        .allowsHitTesting(false)
+                }
+            }
+            .onChange(of: inputText) { _, newValue in
+                tabPressCount = 0
+                recentIndex = 0
+                if newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    hasUserOverriddenDuration = false
+                    selectedDuration = nil
+                    suppressSuggestion = false
+                }
+            }
+            .onSubmit {
+                submitTask()
+            }
                         
                         if let duration = selectedDuration {
                             TimeChip(duration: duration) {
@@ -152,30 +170,79 @@ public struct CommandWindowView: View {
                                 .help("Settings")
                             }
                         } else {
-                            // Clock button
-                            Button {
-                                togglePicker()
-                            } label: {
-                                Image(systemName: showTimePicker ? "clock.fill" : "clock")
-                                    .font(.system(size: 24, weight: .light))
-                                    .foregroundColor(showTimePicker ? .accentColor : (isHoveringClock ? .primary : .secondary))
-                                    .rotationEffect(.degrees(showTimePicker ? 45 : 0))
-                                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: showTimePicker)
+                            // Trailing VStack with duration, dots and clock button
+                            VStack(alignment: .center, spacing: 0) {
+                                if let duration = selectedDuration ?? suggestedDuration {
+                                    Text(formatDurationLabel(duration))
+                                        .font(.system(size: 17, weight: .regular))
+                                        .foregroundStyle(durationColor)
+                                        .animation(.easeOut(duration: 0.15), value: hasUserOverriddenDuration)
+                                }
+                                
+                                Button {
+                                    togglePicker()
+                                } label: {
+                                    Image(systemName: showTimePicker ? "clock.fill" : "clock")
+                                        .font(.system(size: 24, weight: .light))
+                                        .foregroundColor(showTimePicker ? .accentColor : (isHoveringClock ? .primary : .secondary))
+                                        .rotationEffect(.degrees(showTimePicker ? 45 : 0))
+                                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: showTimePicker)
+                                }
+                                .buttonStyle(.plain)
+                                .onHover { isHoveringClock = $0 }
+                                .padding(.trailing, 4)
+                                
+                                if !inputText.isEmpty && recentStore.recentTimes.count >= 2 {
+                                    HStack(spacing: 5) {
+                                        ForEach(0..<min(3, recentStore.recentTimes.count), id: \.self) { i in
+                                            Circle()
+                                                .fill(dotColor(for: i))
+                                                .frame(width: 6, height: 6)
+                                                .animation(.easeOut(duration: 0.15), value: tabPressCount)
+                                                .animation(.easeOut(duration: 0.15), value: recentIndex)
+                                        }
+                                    }
+                                    .padding(.top, 6)
+                                }
                             }
-                            .buttonStyle(.plain)
-                            .onHover { isHoveringClock = $0 }
-                            .padding(.trailing, 4)
                         }
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 28)
+                    .padding(.vertical, 22)
                 }
             }
             .frame(height: 72)
             
+            if let hint = hintText, !showConfirmation {
+                HStack(spacing: 6) {
+                    ForEach(hintSegments(hint), id: \.id) { seg in
+                        if seg.isKey {
+                            Text(seg.text)
+                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .foregroundStyle(Color.white.opacity(0.45))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.white.opacity(0.06))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                )
+                                .cornerRadius(4)
+                        } else {
+                            Text(seg.text)
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color.white.opacity(0.28))
+                        }
+                    }
+                }
+                .padding(.horizontal, 28)
+                .padding(.top, 2)
+                .padding(.bottom, 14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .transition(.opacity)
+            }
+            
             if showTimePicker {
-                Divider()
-                    .padding(.horizontal, 24)
-                
                 TimePickerView(recentStore: recentStore) { duration in
                     withAnimation {
                         selectedDuration = duration
@@ -191,7 +258,7 @@ public struct CommandWindowView: View {
         .frame(width: 560)
         .background(WindowAccessor(window: $window))
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("CommandWindowTabPressed"))) { _ in
-            if !showTimePicker { togglePicker() }
+            handleTab()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { notification in
             guard notification.object as AnyObject? === window else { return }
@@ -290,6 +357,98 @@ public struct CommandWindowView: View {
         if s == 1 { parts.append("1 second") } else if s > 1 { parts.append("\(s) seconds") }
         
         return parts.joined(separator: " ")
+    }
+    
+    private func handleTab() {
+        guard !inputText.isEmpty else { return }
+        let recents = Array(recentStore.recentTimes.prefix(3))
+        guard !recents.isEmpty else {
+            if !showTimePicker { togglePicker() }
+            return
+        }
+        
+        tabPressCount += 1
+        
+        if tabPressCount <= recents.count {
+            recentIndex = tabPressCount - 1
+            withAnimation(.easeOut(duration: 0.15)) {
+                selectedDuration = recents[recentIndex]
+                hasUserOverriddenDuration = true
+            }
+        } else {
+            // Exhausted — open picker
+            tabPressCount = 0
+            if !showTimePicker { togglePicker() }
+        }
+    }
+    
+    private var hintText: String? {
+        if inputText.contains("@") && selectedDuration == nil && !invalidTokenDetected {
+            return "Try [@10m]  [@1h30m]  [@2h]"
+        }
+        switch usageCount {
+        case 0..<1: return "Type a task, press [Enter] to set a \(defaultMinutes) min reminder"
+        case 1...3: return "[Tab] change time   [Enter] set reminder"
+        default: return nil
+        }
+    }
+    
+    @AppStorage("commandWindowUsageCount") private var usageCount: Int = 0
+    @AppStorage("defaultReminderMinutes") private var defaultMinutes: Int = 10
+    
+    private var durationColor: Color {
+        if hasUserOverriddenDuration || (invalidTokenDetected == false && inputText.contains("@")) {
+            return Color.accentColor
+        }
+        return Color.white.opacity(0.7)
+    }
+    
+    private func hintSegments(_ hint: String) -> [HintSegment] {
+        // Split on bracketed [Tab] [Enter] etc. into key + text segments
+        var segments: [HintSegment] = []
+        let pattern = "\\[([^\\]]+)\\]"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return [HintSegment(text: hint, isKey: false)]
+        }
+        let nsHint = hint as NSString
+        var lastEnd = 0
+        regex.enumerateMatches(in: hint, range: NSRange(location: 0, length: nsHint.length)) { match, _, _ in
+            guard let match = match else { return }
+            if match.range.location > lastEnd {
+                let plain = nsHint.substring(with: NSRange(location: lastEnd, length: match.range.location - lastEnd))
+                segments.append(HintSegment(text: plain, isKey: false))
+            }
+            let key = nsHint.substring(with: match.range(at: 1))
+            segments.append(HintSegment(text: key, isKey: true))
+            lastEnd = match.range.location + match.range.length
+        }
+        if lastEnd < nsHint.length {
+            segments.append(HintSegment(text: nsHint.substring(from: lastEnd), isKey: false))
+        }
+        return segments
+    }
+    
+    private func dotColor(for index: Int) -> Color {
+        guard tabPressCount > 0 else {
+            return Color.white.opacity(0.15)
+        }
+        if index == recentIndex {
+            return Color.accentColor
+        } else if index < tabPressCount {
+            return Color.white.opacity(0.4)
+        } else {
+            return Color.white.opacity(0.15)
+        }
+    }
+    
+    private func formatDurationLabel(_ duration: TimeInterval) -> String {
+        let h = Int(duration) / 3600
+        let m = (Int(duration) % 3600) / 60
+        
+        if h > 0 && m == 0 { return "\(h) h" }
+        if h > 0 && m > 0 { return "\(h) h \(m) m" }
+        if m > 0 { return "\(m) min" }
+        return "<1 min"
     }
 }
 
@@ -422,4 +581,10 @@ private struct WarningChip: View {
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovering)
         .onHover { isHovering = $0 }
     }
+}
+
+private struct HintSegment: Identifiable {
+    let id = UUID()
+    let text: String
+    let isKey: Bool
 }

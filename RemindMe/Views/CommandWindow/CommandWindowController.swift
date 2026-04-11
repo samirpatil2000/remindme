@@ -32,7 +32,7 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     
     public init() {
         let panel = CommandPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 72),
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 104),
             styleMask: [.nonactivatingPanel, .fullSizeContentView, .borderless],
             backing: .buffered,
             defer: false
@@ -53,7 +53,9 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         visualEffect.state = .active
         visualEffect.blendingMode = .behindWindow
         visualEffect.wantsLayer = true
-        visualEffect.layer?.cornerRadius = 14
+        visualEffect.layer?.cornerRadius = 16
+        visualEffect.layer?.borderWidth = 0.5
+        visualEffect.layer?.borderColor = NSColor.white.withAlphaComponent(0.06).cgColor
         visualEffect.layer?.masksToBounds = true
         
         panel.contentView = visualEffect
@@ -91,7 +93,7 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         if let screen = NSScreen.main {
             let x = screen.visibleFrame.midX - (560 / 2)
             let y = screen.visibleFrame.midY + (screen.visibleFrame.height * 0.15)
-            window.setFrame(NSRect(x: x, y: y, width: 560, height: 72), display: false)
+            window.setFrame(NSRect(x: x, y: y, width: 560, height: 104), display: false)
         } else {
             window.center()
         }
@@ -174,9 +176,9 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
     public func resizePanel(to newHeight: CGFloat) {
         guard let window = self.window else { return }
         var currentFrame = window.frame
-        let heightDiff = newHeight - currentFrame.height
+        let heightDiff = max(newHeight, 104) - currentFrame.height
         currentFrame.origin.y -= heightDiff
-        currentFrame.size.height = newHeight
+        currentFrame.size.height = max(newHeight, 104)
         
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0.2

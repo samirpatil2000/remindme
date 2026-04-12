@@ -65,7 +65,7 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         } onEscape: { [weak self] in
             self?.hideWindow()
         } onTogglePicker: { [weak self] showPicker in
-            self?.resizePanel(to: showPicker ? 220 : 72)
+            self?.resizePanel(to: showPicker ? 184 : 104)
         }
         
         let hostingView = NSHostingView(rootView: swiftUIView)

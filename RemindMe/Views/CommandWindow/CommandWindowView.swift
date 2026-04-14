@@ -61,7 +61,7 @@ public struct CommandWindowView: View {
     }
     
     private var durationColor: Color {
-        hasUserOverriddenDuration || inputText.contains("@") ? Color.accentColor : Color.white.opacity(0.7)
+        hasUserOverriddenDuration || inputText.contains("@") ? Color.accentColor : Color.primary.opacity(0.7)
     }
 
     public var onSubmit: (String, TimeInterval?) -> Void
@@ -154,14 +154,14 @@ public struct CommandWindowView: View {
                 .font(.system(size: 21, weight: .light))
                 .tracking(-0.2)
                 .textFieldStyle(.plain)
-                .foregroundStyle(Color.white.opacity(0.88))
+                .foregroundStyle(Color.primary.opacity(0.88))
                 .focused($isInputFocused)
                 .overlay(alignment: .leading) {
                     if inputText.isEmpty {
                         Text("Remind me to...")
                             .font(.system(size: 21, weight: .light))
                             .tracking(-0.2)
-                            .foregroundStyle(Color.white.opacity(0.22))
+                            .foregroundStyle(Color.primary.opacity(0.22))
                             .allowsHitTesting(false)
                     }
                 }
@@ -196,10 +196,10 @@ public struct CommandWindowView: View {
     // MARK: - Dot Color
     
     private func dotColor(for index: Int) -> Color {
-        guard tabPressCount > 0 else { return Color.white.opacity(0.15) }
+        guard tabPressCount > 0 else { return Color.primary.opacity(0.15) }
         if index == recentIndex { return Color.accentColor }
-        if index < tabPressCount { return Color.white.opacity(0.4) }
-        return Color.white.opacity(0.15)
+        if index < tabPressCount { return Color.primary.opacity(0.4) }
+        return Color.primary.opacity(0.15)
     }
     
     // MARK: - Compact Duration Formatter
@@ -219,10 +219,10 @@ public struct CommandWindowView: View {
     private static let warmAmber = Color(hue: 0.08, saturation: 0.85, brightness: 1.0)
     
     private func hintBar(for hint: String, isWarning: Bool = false) -> some View {
-        let textColor = isWarning ? Self.warmAmber.opacity(0.85) : Color.white.opacity(0.28)
-        let badgeText = isWarning ? Self.warmAmber.opacity(0.9) : Color.white.opacity(0.45)
-        let badgeBg   = isWarning ? Self.warmAmber.opacity(0.10) : Color.white.opacity(0.06)
-        let badgeBorder = isWarning ? Self.warmAmber.opacity(0.25) : Color.white.opacity(0.1)
+        let textColor = isWarning ? Self.warmAmber.opacity(0.85) : Color.primary.opacity(0.28)
+        let badgeText = isWarning ? Self.warmAmber.opacity(0.9) : Color.primary.opacity(0.45)
+        let badgeBg   = isWarning ? Self.warmAmber.opacity(0.10) : Color.primary.opacity(0.06)
+        let badgeBorder = isWarning ? Self.warmAmber.opacity(0.25) : Color.primary.opacity(0.1)
         
         return HStack(spacing: 6) {
             if isWarning {
@@ -294,13 +294,13 @@ public struct CommandWindowView: View {
             HStack(spacing: 6) {
                 Text(confirmedTaskTitle)
                     .font(.system(size: 20, weight: .regular))
-                    .foregroundStyle(Color.white.opacity(0.85))
+                    .foregroundStyle(Color.primary.opacity(0.85))
                     .lineLimit(1)
                     .truncationMode(.tail)
                 if !confirmedTaskTime.isEmpty {
                     Text(confirmedTaskTime)
                         .font(.system(size: 17, weight: .light))
-                        .foregroundStyle(Color.white.opacity(0.3))
+                        .foregroundStyle(Color.primary.opacity(0.3))
                 }
             }
             Spacer(minLength: 0)

@@ -18,7 +18,7 @@ public struct TimePickerView: View {
             Text("MORE DURATIONS")
                 .font(.system(size: 11, weight: .medium))
                 .tracking(1.2)
-                .foregroundStyle(Color.white.opacity(0.25))
+                .foregroundStyle(Color.primary.opacity(0.25))
             
             HStack(spacing: 8) {
                 ForEach(presetMinutes, id: \.self) { min in
@@ -62,7 +62,7 @@ private struct DurationPill: View {
         Button(action: action) {
             Text(formatTimeInterval(time))
                 .font(.system(size: 13, weight: isSelected ? .medium : .regular, design: .rounded))
-                .foregroundStyle(isSelected ? Color.accentColor : Color.white.opacity(isHovering ? 0.7 : 0.45))
+                .foregroundStyle(isSelected ? Color.accentColor : Color.primary.opacity(isHovering ? 0.7 : 0.45))
                 .padding(.horizontal, 14)
                 .padding(.vertical, 7)
                 .background(background)
@@ -83,7 +83,7 @@ private struct DurationPill: View {
                 .overlay(Capsule().stroke(Color.accentColor.opacity(0.4), lineWidth: 1))
         } else {
             Capsule()
-                .fill(Color.white.opacity(isHovering ? 0.08 : 0.05))
+                .fill(Color.primary.opacity(isHovering ? 0.08 : 0.05))
         }
     }
     

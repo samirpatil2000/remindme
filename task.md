@@ -2,3 +2,4 @@
 5/ Use system notification doesn't work at all if you opt for the same ofc 
 6/ Make similar to todoist 
 7/ script for Intel and silicon
+8/ Enter and set in 10min is hardcoded 

@@ -47,7 +47,8 @@ public struct CommandWindowView: View {
     
     private var displayedDuration: TimeInterval? {
         if hasUserOverriddenDuration, let sel = selectedDuration { return sel }
-        if inputText.contains("@") {
+        let isTypingToken = inputText.range(of: "(?:^|\\s)@", options: .regularExpression) != nil
+        if isTypingToken {
             if case .success(let payload) = ReminderParser.parse(inputText) {
                 let diff = payload.firesAt.timeIntervalSinceNow
                 if diff > 0 && inputText.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
@@ -61,7 +62,8 @@ public struct CommandWindowView: View {
     }
     
     private var durationColor: Color {
-        hasUserOverriddenDuration || inputText.contains("@") ? Color.accentColor : Color.primary.opacity(0.7)
+        let isTypingToken = inputText.range(of: "(?:^|\\s)@", options: .regularExpression) != nil
+        return hasUserOverriddenDuration || isTypingToken ? Color.accentColor : Color.primary.opacity(0.7)
     }
 
     public var onSubmit: (String, TimeInterval?) -> Void
@@ -114,6 +116,13 @@ public struct CommandWindowView: View {
         .onChange(of: inputText) { _, newValue in
             tabPressCount = 0
             recentIndex = 0
+            
+            let isTypingToken = newValue.range(of: "(?:^|\\s)@", options: .regularExpression) != nil
+            if isTypingToken {
+                hasUserOverriddenDuration = false
+                selectedDuration = nil
+            }
+            
             if newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 hasUserOverriddenDuration = false
                 selectedDuration = nil
@@ -311,7 +320,8 @@ public struct CommandWindowView: View {
     // MARK: - Hint Text
     
     private var hintText: String? {
-        if inputText.contains("@") && !invalidTokenDetected && selectedDuration == nil {
+        let isTypingToken = inputText.range(of: "(?:^|\\s)@", options: .regularExpression) != nil
+        if isTypingToken && !invalidTokenDetected && selectedDuration == nil {
             return "Try [@10m]  [@1h30m]  [@2h]"
         }
         if invalidTokenDetected {

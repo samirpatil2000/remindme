@@ -241,17 +241,28 @@ public struct CommandWindowView: View {
             }
             ForEach(parseHint(hint)) { seg in
                 if seg.isKey {
-                    Text(seg.text)
-                        .font(.system(size: 11, weight: .medium, design: .monospaced))
-                        .foregroundStyle(badgeText)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(badgeBg)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(badgeBorder, lineWidth: 1)
-                        )
-                        .cornerRadius(4)
+                    if seg.text.hasPrefix("@") {
+                        ClickableHintBadge(
+                            text: seg.text,
+                            textColor: badgeText,
+                            bgColor: badgeBg,
+                            borderColor: badgeBorder
+                        ) {
+                            handleHintBadgeClick(seg.text)
+                        }
+                    } else {
+                        Text(seg.text)
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .foregroundStyle(badgeText)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(badgeBg)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(badgeBorder, lineWidth: 1)
+                            )
+                            .cornerRadius(4)
+                    }
                 } else {
                     Text(seg.text)
                         .font(.system(size: 12))
@@ -264,6 +275,29 @@ public struct CommandWindowView: View {
         .padding(.top, 2)
         .padding(.bottom, 14)
         .animation(.easeInOut(duration: 0.2), value: hint)
+    }
+    
+    private func handleHintBadgeClick(_ text: String) {
+        guard text.hasPrefix("@") else { return }
+        
+        let pattern = "(?:^|\\s)(@[^\\s]*)$"
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: inputText, range: NSRange(inputText.startIndex..., in: inputText)) {
+            
+            let tokenNSRange = match.range(at: 1)
+            if let swiftRange = Range(tokenNSRange, in: inputText) {
+                inputText.replaceSubrange(swiftRange, with: text + " ")
+                isInputFocused = true
+                return
+            }
+        }
+        
+        if inputText.isEmpty || inputText.hasSuffix(" ") {
+            inputText += text + " "
+        } else {
+            inputText += " " + text + " "
+        }
+        isInputFocused = true
     }
     
     // MARK: - Hint Parsing
@@ -428,6 +462,35 @@ public struct CommandWindowView: View {
 }
 
 // MARK: - Supporting Types
+
+private struct ClickableHintBadge: View {
+    let text: String
+    let textColor: Color
+    let bgColor: Color
+    let borderColor: Color
+    let action: () -> Void
+    
+    @State private var isHovering = false
+    
+    var body: some View {
+        Button(action: action) {
+            Text(text)
+                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                .foregroundStyle(textColor)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(bgColor)
+                .overlay(Color.primary.opacity(isHovering ? 0.05 : 0))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(borderColor, lineWidth: 1)
+                )
+                .cornerRadius(4)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+    }
+}
 
 private struct WindowAccessor: NSViewRepresentable {
     @Binding var window: NSWindow?

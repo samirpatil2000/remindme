@@ -163,6 +163,15 @@ public struct CommandWindowView: View {
                         
                         if inputText.isEmpty && selectedDuration == nil && suggestedDuration == nil {
                             HStack(spacing: 8) {
+                                LockQuickActionChip {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        isLockMode = true
+                                        inputText = "@30s"
+                                        isInputFocused = true
+                                    }
+                                }
+                                .transition(.scale(scale: 0.95).combined(with: .opacity))
+
                                 // Individual key badges
                                 HStack(spacing: 4) {
                                     let parts = state.shortcutHint.split(separator: " ")
@@ -580,6 +589,34 @@ private struct LockChip: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
                     .stroke(Color.accentColor.opacity(isHovering ? 0.4 : 0.2), lineWidth: 1)
+            )
+            .cornerRadius(6)
+            .animation(.easeOut(duration: 0.1), value: isHovering)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+    }
+}
+
+private struct LockQuickActionChip: View {
+    let action: () -> Void
+    @State private var isHovering = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 10, weight: .semibold))
+                Text("Lock 30s")
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3.5)
+            .foregroundColor(.accentColor)
+            .background(Color.accentColor.opacity(isHovering ? 0.15 : 0.08))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Color.accentColor.opacity(isHovering ? 0.35 : 0.18), lineWidth: 1)
             )
             .cornerRadius(6)
             .animation(.easeOut(duration: 0.1), value: isHovering)

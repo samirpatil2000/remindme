@@ -5,6 +5,7 @@ import SwiftUI
 public final class CommandWindowState: ObservableObject {
     @Published public var shortcutHint: String
     @Published public private(set) var focusRequestID = UUID()
+    @Published public var prefillText: String? = nil
 
     public init(shortcutHint: String = "⌘ ⇧ Space") {
         self.shortcutHint = shortcutHint
@@ -26,6 +27,7 @@ public class CommandPanel: NSPanel {
 
 public class CommandWindowController: NSWindowController, NSWindowDelegate {
     public var onParseText: ((String, TimeInterval?) -> Void)?
+    public var onLockCommand: ((TimeInterval) -> Void)?
     
     private var isAnimating = false
     private let state = CommandWindowState()
@@ -60,6 +62,8 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         
         let swiftUIView = CommandWindowView(state: state) { [weak self] text, duration in
             self?.onParseText?(text, duration)
+        } onLock: { [weak self] duration in
+            self?.onLockCommand?(duration)
         } onEscape: { [weak self] in
             self?.hideWindow()
         } onTogglePicker: { [weak self] showPicker in
@@ -85,8 +89,12 @@ public class CommandWindowController: NSWindowController, NSWindowDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func showWindow() {
+    public func showWindow(prefillText: String? = nil) {
         guard let window = self.window, !isAnimating else { return }
+
+        if let text = prefillText {
+            state.prefillText = text
+        }
 
         if let screen = NSScreen.main {
             let x = screen.visibleFrame.midX - (560 / 2)

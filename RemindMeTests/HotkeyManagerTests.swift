@@ -1,6 +1,7 @@
 import XCTest
 @testable import RemindMe
 
+@MainActor
 final class HotkeyManagerTests: XCTestCase {
     
     func testRegistrationSucceedsSilently() {

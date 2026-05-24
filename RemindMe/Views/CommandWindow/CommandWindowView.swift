@@ -3,6 +3,7 @@ import SwiftUI
 public struct CommandWindowView: View {
     @ObservedObject private var state: CommandWindowState
     @State private var inputText = ""
+    @State private var isLockMode = false
     @State private var showConfirmation = false
     @State private var confirmedTaskTitle = ""
     @State private var confirmedTaskTime = ""
@@ -23,6 +24,13 @@ public struct CommandWindowView: View {
             return nil
         }
         return recentStore.recentTimes.first
+    }
+    
+    private var lockAutocompleteVisible: Bool {
+        if isLockMode { return false }
+        let lower = inputText.lowercased()
+        let isPrefix = lower == "lo" || lower == "loc" || lower == "lock"
+        return isPrefix && selectedDuration == nil && !inputText.contains("@")
     }
     
     private var invalidTokenDetected: Bool {
@@ -48,12 +56,14 @@ public struct CommandWindowView: View {
     }
 
     public var onSubmit: (String, TimeInterval?) -> Void
+    public var onLock: (TimeInterval) -> Void
     public var onEscape: () -> Void
     public var onTogglePicker: ((Bool) -> Void)?
 
-    public init(state: CommandWindowState, onSubmit: @escaping (String, TimeInterval?) -> Void, onEscape: @escaping () -> Void, onTogglePicker: ((Bool) -> Void)? = nil) {
+    public init(state: CommandWindowState, onSubmit: @escaping (String, TimeInterval?) -> Void, onLock: @escaping (TimeInterval) -> Void, onEscape: @escaping () -> Void, onTogglePicker: ((Bool) -> Void)? = nil) {
         self.state = state
         self.onSubmit = onSubmit
+        self.onLock = onLock
         self.onEscape = onEscape
         self.onTogglePicker = onTogglePicker
     }
@@ -86,7 +96,7 @@ public struct CommandWindowView: View {
                     HStack(spacing: 16) {
 
                         
-                        TextField("Remind me to... @5m", text: $inputText)
+                        TextField(isLockMode ? "Duration... @30s" : "Remind me to... @5m", text: $inputText)
                             .font(.system(size: 20, weight: .light))
                             .textFieldStyle(.plain)
                             .focused($isInputFocused)
@@ -94,12 +104,35 @@ public struct CommandWindowView: View {
                                 if newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                     suppressSuggestion = false
                                 }
+                                
+                                // Auto-convert "lock" keyword to Lock mode chip
+                                let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                                if trimmed.lowercased() == "lock" {
+                                    withAnimation {
+                                        isLockMode = true
+                                        inputText = ""
+                                    }
+                                } else if trimmed.lowercased().hasPrefix("lock ") {
+                                    let remainder = String(trimmed.dropFirst(5))
+                                    withAnimation {
+                                        isLockMode = true
+                                        inputText = remainder
+                                    }
+                                }
                             }
                             .onSubmit {
                                 submitTask()
                             }
                         
-                        if let duration = selectedDuration {
+                        if isLockMode {
+                            LockChip {
+                                withAnimation {
+                                    isLockMode = false
+                                    inputText = ""
+                                }
+                            }
+                            .transition(.scale(scale: 0.95).combined(with: .opacity))
+                        } else if let duration = selectedDuration {
                             TimeChip(duration: duration) {
                                 withAnimation {
                                     selectedDuration = nil
@@ -107,6 +140,15 @@ public struct CommandWindowView: View {
                                 }
                             }
                             .transition(.scale(scale: 0.95).combined(with: .opacity))
+                        } else if lockAutocompleteVisible {
+                            LockAutocompleteChip {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    isLockMode = true
+                                    inputText = "@30s"
+                                    isInputFocused = true
+                                }
+                            }
+                            .transition(.opacity)
                         } else if invalidTokenDetected {
                             WarningChip()
                                 .transition(.opacity)
@@ -152,12 +194,13 @@ public struct CommandWindowView: View {
                                 .help("Settings")
                             }
                         } else {
-                            // Clock button
+                            // Clock/Lock button morphs dynamically based on prefix
+                            let isLockCommand = isLockMode || inputText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased().hasPrefix("lock")
                             Button {
                                 togglePicker()
                             } label: {
-                                Image(systemName: showTimePicker ? "clock.fill" : "clock")
-                                    .font(.system(size: 24, weight: .light))
+                                Image(systemName: isLockCommand ? (showTimePicker ? "lock.fill" : "lock") : (showTimePicker ? "clock.fill" : "clock"))
+                                    .font(.system(size: isLockCommand ? 21 : 24, weight: .light))
                                     .foregroundColor(showTimePicker ? .accentColor : (isHoveringClock ? .primary : .secondary))
                                     .rotationEffect(.degrees(showTimePicker ? 45 : 0))
                                     .animation(.spring(response: 0.3, dampingFraction: 0.6), value: showTimePicker)
@@ -191,7 +234,15 @@ public struct CommandWindowView: View {
         .frame(width: 560)
         .background(WindowAccessor(window: $window))
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("CommandWindowTabPressed"))) { _ in
-            if !showTimePicker { togglePicker() }
+            if lockAutocompleteVisible {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isLockMode = true
+                    inputText = "@30s"
+                    isInputFocused = true
+                }
+            } else if !showTimePicker {
+                togglePicker()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { notification in
             guard notification.object as AnyObject? === window else { return }
@@ -215,48 +266,102 @@ public struct CommandWindowView: View {
             await Task.yield()
             isInputFocused = true
         }
+        .onChange(of: state.prefillText) { _, newValue in
+            if let text = newValue {
+                inputText = text
+                state.prefillText = nil
+            }
+        }
     }
     
     private func submitTask() {
-        let text = inputText
-        if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            let duration = selectedDuration ?? suggestedDuration
-            onSubmit(text, duration)
-            if let d = duration { recentStore.add(d) }
+        let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if isLockMode {
+            let duration = extractLockDuration(from: text)
+            onLock(duration)
             
-            var savedTitle = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            var finalDuration = duration
+            // Hide the command window immediately
+            onEscape()
             
-            if duration == nil {
-                if case .success(let payload) = ReminderParser.parse(text) {
-                    savedTitle = payload.title
-                    finalDuration = round(payload.firesAt.timeIntervalSinceNow)
-                }
+            // Reset state immediately
+            inputText = ""
+            isLockMode = false
+            selectedDuration = nil
+            suppressSuggestion = false
+            showConfirmation = false
+            return
+        }
+        
+        guard !text.isEmpty else { return }
+        
+        if text.lowercased().hasPrefix("lock") {
+            let duration = extractLockDuration(from: text)
+            onLock(duration)
+            
+            // Hide the command window immediately
+            onEscape()
+            
+            // Reset state immediately
+            inputText = ""
+            selectedDuration = nil
+            suppressSuggestion = false
+            showConfirmation = false
+            return
+        }
+        
+        let duration = selectedDuration ?? suggestedDuration
+        onSubmit(text, duration)
+        if let d = duration { recentStore.add(d) }
+        
+        var savedTitle = text
+        var finalDuration = duration
+        
+        if duration == nil {
+            if case .success(let payload) = ReminderParser.parse(text) {
+                savedTitle = payload.title
+                finalDuration = round(payload.firesAt.timeIntervalSinceNow)
+            }
+        }
+        
+        withAnimation(.easeIn(duration: 0.15)) {
+            confirmedTaskTitle = savedTitle
+            if let dur = finalDuration, dur > 0 {
+                confirmedTaskTime = "in \(formatDetailedDuration(dur))"
+            } else {
+                confirmedTaskTime = ""
             }
             
-            withAnimation(.easeIn(duration: 0.15)) {
-                confirmedTaskTitle = savedTitle
-                if let dur = finalDuration, dur > 0 {
-                    confirmedTaskTime = "in \(formatDetailedDuration(dur))"
-                } else {
-                    confirmedTaskTime = ""
-                }
-                
-                showConfirmation = true
-                if showTimePicker { togglePicker() }
+            showConfirmation = true
+            if showTimePicker { togglePicker() }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // Hide the window first — keeps the checkmark visible during the fade-out
+            onEscape()
+            // Reset state after the window is fully gone
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                inputText = ""
+                selectedDuration = nil
+                suppressSuggestion = false
+                showConfirmation = false
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                // Hide the window first — keeps the checkmark visible during the fade-out
-                onEscape()
-                // Reset state after the window is fully gone
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    inputText = ""
-                    selectedDuration = nil
-                    suppressSuggestion = false
-                    showConfirmation = false
+        }
+    }
+    
+    private func extractLockDuration(from text: String) -> TimeInterval {
+        let pattern = "(?:^|\\s)(@[^\\s]+)"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return 30 }
+        let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+        
+        for match in matches {
+            if let tokenRange = Range(match.range(at: 1), in: text) {
+                let tokenStr = String(text[tokenRange])
+                if let timeToken = TimeToken(fromString: tokenStr) {
+                    return timeToken.duration
                 }
             }
         }
+        return 30 // Default 30s if no token
     }
     
     private func togglePicker() {
@@ -420,6 +525,66 @@ private struct WarningChip: View {
         )
         .cornerRadius(6)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovering)
+        .onHover { isHovering = $0 }
+    }
+}
+
+private struct LockAutocompleteChip: View {
+    let onConfirm: () -> Void
+    @State private var isHovering = false
+    
+    var body: some View {
+        Button(action: onConfirm) {
+            HStack(spacing: 4) {
+                Text("lock @30s")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .foregroundColor(.secondary)
+            .background(Color.secondary.opacity(isHovering ? 0.2 : 0.1))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Color.secondary.opacity(0.15), lineWidth: 1)
+            )
+            .cornerRadius(6)
+            .animation(.easeOut(duration: 0.1), value: isHovering)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+    }
+}
+
+private struct LockChip: View {
+    let onRemove: () -> Void
+    @State private var isHovering = false
+    
+    var body: some View {
+        Button(action: onRemove) {
+            HStack(spacing: 4) {
+                if isHovering {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
+                } else {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 10, weight: .medium))
+                }
+                
+                Text("Lock")
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .foregroundColor(.accentColor)
+            .background(Color.accentColor.opacity(isHovering ? 0.15 : 0.08))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Color.accentColor.opacity(isHovering ? 0.4 : 0.2), lineWidth: 1)
+            )
+            .cornerRadius(6)
+            .animation(.easeOut(duration: 0.1), value: isHovering)
+        }
+        .buttonStyle(.plain)
         .onHover { isHovering = $0 }
     }
 }

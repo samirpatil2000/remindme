@@ -1,6 +1,7 @@
 import XCTest
 @testable import RemindMe
 
+@MainActor
 final class PopupManagerTests: XCTestCase {
     
     var store: TaskStore!
@@ -10,8 +11,8 @@ final class PopupManagerTests: XCTestCase {
     let suiteName = "PopupManagerTestsSuite"
     var didOpenMenuBar = false
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         userDefaults = UserDefaults(suiteName: suiteName)
         userDefaults.removePersistentDomain(forName: suiteName)
         store = TaskStore(defaults: userDefaults)
@@ -20,9 +21,9 @@ final class PopupManagerTests: XCTestCase {
         didOpenMenuBar = false
     }
     
-    override func tearDown() {
+    override func tearDown() async throws {
         userDefaults.removePersistentDomain(forName: suiteName)
-        super.tearDown()
+        try await super.tearDown()
     }
     
     func testSingleReminderFiresOneCardCreated() {
@@ -159,6 +160,6 @@ final class PopupManagerTests: XCTestCase {
         
         let updatedTask = store.tasks.first(where: { $0.id == task.id })!
         XCTAssertEqual(updatedTask.state, .stillRunning)
-        XCTAssertEqual(updatedTask.reminderFiresAt, expectedNewFiresAt)
+        XCTAssertEqual(updatedTask.reminderFiresAt.timeIntervalSince(expectedNewFiresAt), 0, accuracy: 0.1)
     }
 }

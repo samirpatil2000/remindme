@@ -21,6 +21,7 @@ public struct ReminderParser {
         
         var validTokenRange: NSRange?
         var validDuration: TimeInterval?
+        var hasInvalidToken = false
         
         for match in matches {
             let tokenNSRange = match.range(at: 1)
@@ -32,7 +33,13 @@ public struct ReminderParser {
                 validTokenRange = match.range(at: 0) // The full match including the leading space if any
                 validDuration = token.duration
                 break
+            } else {
+                hasInvalidToken = true
             }
+        }
+        
+        if validDuration == nil && hasInvalidToken {
+            return .failure(.invalidToken)
         }
         
 

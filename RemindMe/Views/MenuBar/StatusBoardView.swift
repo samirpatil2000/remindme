@@ -24,6 +24,33 @@ public struct StatusBoardView: View {
             
             ScrollView {
                 VStack(spacing: 8) {
+                    // Take a Break option
+                    Button {
+                        NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindowWithLock"), object: nil)
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "lock.shield.fill")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.accentColor)
+                            Text("Take a Break")
+                                .font(.system(.body, design: .rounded).weight(.medium))
+                                .foregroundStyle(Color.primary)
+                            Spacer()
+                            Text("⌘L")
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color(nsColor: .controlBackgroundColor))
+                        .cornerRadius(8)
+                        .shadow(color: Color.black.opacity(0.04), radius: 2, x: 0, y: 1)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 4)
+
                     if activeAndPastDueTasks.isEmpty {
                         VStack(spacing: 6) {
                             ZStack {
@@ -138,7 +165,7 @@ public struct StatusBoardView: View {
                 .animation(.spring(response: 0.3, dampingFraction: 0.7), value: taskStore.tasks)
             }
         }
-        .frame(width: 340, height: activeAndPastDueTasks.isEmpty && taskStore.completedToday == 0 ? 240 : 400, alignment: .top)
+        .frame(width: 340, height: activeAndPastDueTasks.isEmpty && taskStore.completedToday == 0 ? 290 : 400, alignment: .top)
     }
     
     private var headerView: some View {

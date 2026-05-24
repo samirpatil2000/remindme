@@ -31,6 +31,10 @@ public class MenuBarController {
         NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindow"), object: nil)
     }
 
+    @objc private func showLockWindowFromMenu() {
+        NotificationCenter.default.post(name: NSNotification.Name("ShowCommandWindowWithLock"), object: nil)
+    }
+
     @objc private func openSettingsFromMenu() {
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
         NSApp.activate(ignoringOtherApps: true)
@@ -39,6 +43,8 @@ public class MenuBarController {
     @objc private func togglePopover(_ sender: AnyObject?) {
         if let event = NSApp.currentEvent, event.type == .rightMouseUp || event.modifierFlags.contains(.control) {
             let menu = NSMenu()
+            menu.addItem(withTitle: "Take a Break...", action: #selector(showLockWindowFromMenu), keyEquivalent: "l")
+            menu.items.last?.target = self
             menu.addItem(withTitle: "New Reminder", action: #selector(showCommandWindowFromMenu), keyEquivalent: "n")
             menu.items.last?.target = self
             menu.addItem(withTitle: "Settings...", action: #selector(openSettingsFromMenu), keyEquivalent: ",")

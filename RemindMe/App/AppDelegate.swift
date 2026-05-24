@@ -8,6 +8,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     public var commandWindowController: CommandWindowController!
     public var popupManager: PopupManager!
     public var hotkeyManager: HotkeyManager!
+    public var lockOverlayController: LockOverlayController!
     
     private var taskTimer: Timer?
     
@@ -26,9 +27,14 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         menuBarController = MenuBarController(taskStore: taskStore)
         commandWindowController = CommandWindowController()
         hotkeyManager = HotkeyManager()
+        lockOverlayController = LockOverlayController()
         
         commandWindowController.onParseText = { [weak self] text, duration in
             self?.handleCommand(text, duration: duration)
+        }
+        
+        commandWindowController.onLockCommand = { [weak self] duration in
+            self?.lockOverlayController.show(duration: duration)
         }
         
         popupManager.onOpenMenuBar = { [weak self] in
@@ -62,6 +68,13 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             Task { @MainActor [weak self] in
                 self?.menuBarController.closePopover(nil)
                 self?.commandWindowController.showWindow()
+            }
+        }
+        
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("ShowCommandWindowWithLock"), object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.menuBarController.closePopover(nil)
+                self?.commandWindowController.showWindow(prefillText: "lock @30s")
             }
         }
         

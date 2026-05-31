@@ -6,9 +6,11 @@ public class MenuBarController {
     private var statusItem: NSStatusItem
     private var popover: NSPopover
     private var taskStore: TaskStore
+    private var caffeinateManager: CaffeinateManager
     
-    public init(taskStore: TaskStore) {
+    public init(taskStore: TaskStore, caffeinateManager: CaffeinateManager) {
         self.taskStore = taskStore
+        self.caffeinateManager = caffeinateManager
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
@@ -22,7 +24,7 @@ public class MenuBarController {
         popover = NSPopover()
         popover.contentSize = NSSize(width: 340, height: 400)
         popover.behavior = .transient
-        popover.contentViewController = NSHostingController(rootView: StatusBoardView(taskStore: taskStore))
+        popover.contentViewController = NSHostingController(rootView: StatusBoardView(taskStore: taskStore, caffeinateManager: caffeinateManager))
         
         statusItem.button?.target = self
     }

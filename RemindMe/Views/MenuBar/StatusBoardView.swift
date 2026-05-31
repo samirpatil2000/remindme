@@ -3,11 +3,13 @@ import AppKit
 
 public struct StatusBoardView: View {
     @ObservedObject var taskStore: TaskStore
+    @ObservedObject var caffeinateManager: CaffeinateManager
     @State private var showCompleted = false
     @State private var isHoveringCompletedHeader = false
     
-    public init(taskStore: TaskStore) {
+    public init(taskStore: TaskStore, caffeinateManager: CaffeinateManager) {
         self.taskStore = taskStore
+        self.caffeinateManager = caffeinateManager
     }
     
     var activeAndPastDueTasks: [ReminderTask] {
@@ -20,6 +22,12 @@ public struct StatusBoardView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
             
+            Divider()
+
+            StayAwakeSectionView(caffeinateManager: caffeinateManager)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+
             Divider()
             
             ScrollView {
@@ -241,6 +249,96 @@ public struct StatusBoardView: View {
     private func formatAggregateMins(_ interval: TimeInterval) -> String {
         let mins = Int(interval) / 60
         return mins < 60 ? "\(mins)m" : "\(mins / 60)h \(mins % 60)m"
+    }
+}
+
+private struct StayAwakeSectionView: View {
+    @ObservedObject var caffeinateManager: CaffeinateManager
+    private let durations: [(String, TimeInterval?)] = [
+        ("∞", nil), ("5m", 300), ("10m", 600), ("30m", 1_800),
+        ("1h", 3_600), ("2h", 7_200), ("4h", 14_400)
+    ]
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "cup.and.saucer.fill")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(caffeinateManager.isActive ? Color.green : Color.accentColor)
+
+            VStack(alignment: .leading, spacing: 7) {
+                HStack(spacing: 8) {
+                    Text("Stay Awake")
+                        .font(.system(.body, design: .rounded).weight(.medium))
+
+                    if caffeinateManager.isActive {
+                        Text("Active")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color.green)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 3)
+                            .background(Capsule().fill(Color.green.opacity(0.12)))
+                    }
+
+                    Spacer()
+
+                    if caffeinateManager.isActive {
+                        TimelineView(.periodic(from: Date(), by: 1.0)) { context in
+                            Text(countdownText(now: context.date))
+                                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                                .foregroundStyle(Color.secondary)
+                        }
+
+                        Button("Stop") {
+                            caffeinateManager.stop()
+                        }
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .buttonStyle(.plain)
+                        .foregroundStyle(Color.red)
+                    }
+                }
+
+                if !caffeinateManager.isActive {
+                    HStack(spacing: 6) {
+                        ForEach(durations, id: \.0) { label, duration in
+                            StayAwakeTimeBubble(label: label) {
+                                caffeinateManager.start(duration: duration)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func countdownText(now: Date) -> String {
+        guard let expiresAt = caffeinateManager.expiresAt else { return "Until stopped" }
+        let remaining = max(0, Int(expiresAt.timeIntervalSince(now)))
+        if remaining < 60 { return "\(remaining)s" }
+        let minutes = remaining / 60
+        if minutes < 60 { return "\(minutes)m \(remaining % 60)s" }
+        return "\(minutes / 60)h \(minutes % 60)m"
+    }
+}
+
+private struct StayAwakeTimeBubble: View {
+    let label: String
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 13, weight: .regular, design: .rounded))
+                .foregroundColor(isHovering ? .primary : .secondary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 30)
+                .background(
+                    Capsule()
+                        .fill(isHovering ? Color.primary.opacity(0.06) : Color.primary.opacity(0.03))
+                )
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
     }
 }
 

@@ -27,6 +27,7 @@ public class PopupManager: ObservableObject {
     @Published public private(set) var overflowPopups: [ActivePopup] = []
     
     public var moreIndicatorPanel: NSPanel?
+    public var batteryPanel: NSPanel?
     
     private let taskStore: TaskStore
     public var onOpenMenuBar: (() -> Void)?
@@ -227,6 +228,49 @@ public class PopupManager: ObservableObject {
             )
             panel.orderFrontRegardless()
             moreIndicatorPanel = panel
+        }
+    }
+    
+    public func showBatteryPopup(message: String) {
+        dismissBatteryPopup()
+        
+        let cardView = BatteryPopupView(
+            message: message,
+            onDismiss: { [weak self] in
+                self?.dismissBatteryPopup()
+            }
+        )
+        
+        let panel = PopupCard(view: cardView)
+        let cardWidth: CGFloat = 380
+        let cardHeight: CGFloat = 160
+        
+        guard let screen = NSScreen.main else { return }
+        let screenFrame = screen.visibleFrame
+        let centerX = screenFrame.midX - cardWidth / 2
+        let centerY = screenFrame.midY - cardHeight / 2
+        
+        panel.setFrame(NSRect(x: centerX, y: centerY, width: cardWidth, height: cardHeight), display: true)
+        panel.alphaValue = 0
+        panel.contentView?.layer?.transform = CATransform3DMakeScale(0.95, 0.95, 1.0)
+        panel.orderFrontRegardless()
+        
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.25
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            panel.animator().alphaValue = 1.0
+            panel.contentView?.animator().layer?.transform = CATransform3DIdentity
+        }
+        
+        self.batteryPanel = panel
+    }
+    
+    public func dismissBatteryPopup() {
+        guard let panel = batteryPanel else { return }
+        batteryPanel = nil
+        
+        animateDismiss(panel: panel) {
+            panel.close()
         }
     }
 }

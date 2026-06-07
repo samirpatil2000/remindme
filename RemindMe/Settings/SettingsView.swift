@@ -72,6 +72,7 @@ public class ShortcutRecorderNSView: NSView {
 public struct SettingsView: View {
     @AppStorage("defaultReminderMinutes") private var defaultMinutes = 10
     @AppStorage("useSystemNotifications") private var useSystemNotifications = false
+    @AppStorage("enableLowBatteryAlert") private var enableLowBatteryAlert = false
 
     @Binding public var currentShortcut: Shortcut
     @State private var isRecording = false
@@ -170,6 +171,7 @@ public struct SettingsView: View {
                         }))
 
                         Toggle("Use System Notifications", isOn: $useSystemNotifications)
+                        Toggle("Low Battery Alert", isOn: $enableLowBatteryAlert)
                     }
                     .padding(8)
                 }

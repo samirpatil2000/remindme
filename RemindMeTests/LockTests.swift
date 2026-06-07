@@ -46,4 +46,42 @@ final class LockTests: XCTestCase {
         store.increment()
         XCTAssertEqual(store.breaksToday, 1) // Should start counting from 1 today
     }
+    
+    func testCaffeinateManagerStartStop() async throws {
+        let manager = CaffeinateManager()
+        
+        XCTAssertFalse(manager.isActive)
+        XCTAssertNil(manager.expiresAt)
+        
+        manager.start(duration: 5)
+        XCTAssertTrue(manager.isActive)
+        XCTAssertNotNil(manager.expiresAt)
+        
+        manager.stop()
+        XCTAssertFalse(manager.isActive)
+        XCTAssertNil(manager.expiresAt)
+    }
+
+    func testCaffeinateManagerExternalTermination() async throws {
+        let manager = CaffeinateManager()
+        
+        manager.start(duration: 60)
+        XCTAssertTrue(manager.isActive)
+        
+        guard let process = manager.process else {
+            XCTFail("Process was not started")
+            return
+        }
+        
+        process.terminate()
+        
+        for _ in 0..<20 {
+            if !manager.isActive { break }
+            try? await Task.sleep(for: .milliseconds(50))
+        }
+        
+        XCTAssertFalse(manager.isActive)
+        XCTAssertNil(manager.expiresAt)
+        XCTAssertNil(manager.process)
+    }
 }

@@ -24,6 +24,7 @@
 - **Natural Language Parsing** — Set reminders with ease using tokens like `@1m`, `@10m`, `@1h`.
 - **Dual Input Modes** — Type your time to get smart suggestions, or select custom durations directly from an elegant visual TimePicker UI.
 - **Stay Awake** — Keep your Mac awake from the Status Board with one-tap presets powered by macOS `caffeinate`.
+- **Low Battery Alert** — Get notified when the MacBook battery drops below a customizable threshold (10%, 15%, 20%, 30%) on battery power, automatically updating with each 1% drop and stopping once plugged in.
 - **Focus Analytics** — Track your productivity with aggregate focus time and snooze counts natively in the Status Board.
 - **Global Hotkey** — Use a customizable global shortcut to instantly bring up the command window from anywhere.
 - **Todoist-inspired Design** — Clean, functional interface, beautiful hover-reveal UI for completed tasks, and elegant popovers.
@@ -141,9 +142,10 @@ open Package.swift
 ```
 RemindMe/
 ├── App/
-│   ├── AppDelegate.swift       # App lifecycle & Carbon hotkey setup
+│   ├── AppDelegate.swift       # App lifecycle, hotkey & battery listener
 │   └── RemindMeApp.swift       # Swift entry point
 ├── Managers/
+│   ├── BatteryManager.swift    # IOKit battery level & charger monitoring
 │   ├── CaffeinateManager.swift # Stay Awake process lifecycle
 │   ├── HotkeyManager.swift     # Global keyboard shortcuts (Carbon API)
 │   ├── NotificationManager.swift # macOS notification delivery
@@ -152,11 +154,17 @@ RemindMe/
 │   ├── ReminderParser.swift    # Natural language parsing logic
 │   └── TimeToken.swift         # Duration token definitions (@1m, etc.)
 ├── Models/
-│   └── Reminder.swift         # Core data structure
+│   └── Task.swift             # Core reminder task models
+├── Settings/
+│   └── SettingsView.swift      # Settings layout and global hotkey capture
 └── Views/
-    ├── CommandWindow.swift     # Quick entry UI
-    ├── MenuBarView.swift       # Menu bar item controller
-    └── SettingsView.swift      # App preferences
+    ├── CommandWindow/         # Quick command window entry UI
+    ├── LockOverlay/           # Fullscreen timer lock screens
+    ├── MenuBar/               # Status board menu item & popover
+    └── Popups/
+        ├── PopupManager.swift # Stacking custom alerts controller
+        ├── PopupStackView.swift # Custom reminder alert UI card
+        └── BatteryPopupView.swift # Custom low battery warning card
 ```
 
 ---

@@ -79,6 +79,10 @@
       <img src="https://github.com/user-attachments/assets/dc287118-4aa1-472f-a267-31d528d26fa1" alt="Status Board: All Clear & Focus Summary" width="380"/>
       <br/>
       <sup>status board — glance, don't manage</sup>
+      <br/><br/><br/>
+      <img src="https://github.com/user-attachments/assets/90037b35-11b7-4b4b-b41e-7b5f355b3b4d" alt="Low Battery Alert Custom Popup" width="380" />
+      <br/>
+      <sup>low battery alert — custom popup</sup>
     </td>
     <td>
       <img src="https://github.com/user-attachments/assets/b1d92e4c-f5ad-45a5-b16c-ce893cf2631f" alt="Quick Reminder Entry with Smart Time Suggestion" width="560"/>
@@ -105,13 +109,6 @@
       <img src="https://github.com/user-attachments/assets/c85e63f4-1ec0-4b52-899b-d8c129edc9c7" alt="Actionable Reminder Notification with Snooze Options" width="400"/>
       <br/>
       <sup>it fires. mark done, extend, or snooze.</sup>
-    </td>
-  </tr>
-  <tr>
-        <td rowspan="4" valign="top">
-    <img width="412" height="185" alt="image-0001" src="https://github.com/user-attachments/assets/90037b35-11b7-4b4b-b41e-7b5f355b3b4d" />
-    <br/>
-      <sup>Battery Alert</sup>
     </td>
   </tr>
 </table>

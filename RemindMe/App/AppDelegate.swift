@@ -10,12 +10,25 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     public var hotkeyManager: HotkeyManager!
     public var lockOverlayController: LockOverlayController!
     public var caffeinateManager: CaffeinateManager!
+    public var batteryManager: BatteryManager!
     
     private var taskTimer: Timer?
+    private var lastAlertedBatteryPercentage: Int?
+    private var lastUsedNotificationStyle: Bool = false
+    private var lastUsedThreshold: Int = 10
     
     // Default to popup style unless user sets to true in settings
     private var useSystemNotifications: Bool {
         UserDefaults.standard.bool(forKey: "useSystemNotifications")
+    }
+    
+    private var enableLowBatteryAlert: Bool {
+        UserDefaults.standard.bool(forKey: "enableLowBatteryAlert")
+    }
+    
+    private var lowBatteryThreshold: Int {
+        let val = UserDefaults.standard.integer(forKey: "lowBatteryThreshold")
+        return val == 0 ? 10 : val
     }
     
     public func applicationDidFinishLaunching(_ notification: Notification) {
@@ -104,12 +117,15 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             try? SMAppService.mainApp.register()
         }
 
+        batteryManager = BatteryManager()
+        setupBatteryMonitoring()
         startTaskTimer()
     }
     
     public func applicationWillTerminate(_ notification: Notification) {
         caffeinateManager.stop()
         hotkeyManager.unregister()
+        batteryManager.stopMonitoring()
     }
     
     public func updateHotkey(shortcut: Shortcut) {
@@ -159,5 +175,80 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
                 popupManager.showPopup(for: task)
             }
         }
+    }
+    
+    private func setupBatteryMonitoring() {
+        lastUsedNotificationStyle = useSystemNotifications
+        lastUsedThreshold = lowBatteryThreshold
+        
+        batteryManager.onBatteryStateChanged = { [weak self] state in
+            self?.handleBatteryStateChange(state)
+        }
+        batteryManager.startMonitoring()
+        evaluateBatteryState()
+        
+        // Listen for settings change via user defaults
+        NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                let currentStyle = self.useSystemNotifications
+                let currentThreshold = self.lowBatteryThreshold
+                if currentStyle != self.lastUsedNotificationStyle || currentThreshold != self.lastUsedThreshold {
+                    self.lastUsedNotificationStyle = currentStyle
+                    self.lastUsedThreshold = currentThreshold
+                    self.lastAlertedBatteryPercentage = nil
+                }
+                self.evaluateBatteryState()
+            }
+        }
+    }
+    
+    private func evaluateBatteryState() {
+        guard let state = batteryManager.currentState else { return }
+        handleBatteryStateChange(state)
+    }
+    
+    private func handleBatteryStateChange(_ state: BatteryState) {
+        guard enableLowBatteryAlert else {
+            dismissBatteryAlerts()
+            lastAlertedBatteryPercentage = nil
+            return
+        }
+        
+        if state.isConnectedToPower || state.isCharging {
+            dismissBatteryAlerts()
+            lastAlertedBatteryPercentage = nil
+            return
+        }
+        
+        if state.percentage < lowBatteryThreshold {
+            let shouldAlert: Bool
+            if let last = lastAlertedBatteryPercentage {
+                shouldAlert = state.percentage < last
+            } else {
+                shouldAlert = true
+            }
+            
+            if shouldAlert {
+                lastAlertedBatteryPercentage = state.percentage
+                let message = "Battery at \(state.percentage)% — plug in your charger."
+                
+                if useSystemNotifications {
+                    NotificationManager.deliverLowBatteryNotification(message: message)
+                    popupManager.dismissBatteryPopup()
+                } else {
+                    popupManager.showBatteryPopup(message: message)
+                    NotificationManager.dismissLowBatteryNotification()
+                }
+            }
+        } else {
+            dismissBatteryAlerts()
+            lastAlertedBatteryPercentage = nil
+        }
+    }
+    
+    private func dismissBatteryAlerts() {
+        NotificationManager.dismissLowBatteryNotification()
+        popupManager.dismissBatteryPopup()
     }
 }

@@ -72,6 +72,8 @@ public class ShortcutRecorderNSView: NSView {
 public struct SettingsView: View {
     @AppStorage("defaultReminderMinutes") private var defaultMinutes = 10
     @AppStorage("useSystemNotifications") private var useSystemNotifications = false
+    @AppStorage("enableLowBatteryAlert") private var enableLowBatteryAlert = false
+    @AppStorage("lowBatteryThreshold") private var lowBatteryThreshold = 10
 
     @Binding public var currentShortcut: Shortcut
     @State private var isRecording = false
@@ -170,6 +172,27 @@ public struct SettingsView: View {
                         }))
 
                         Toggle("Use System Notifications", isOn: $useSystemNotifications)
+                        
+                        Toggle("Low Battery Alert", isOn: $enableLowBatteryAlert.animation(.easeInOut(duration: 0.2)))
+                        
+                        if enableLowBatteryAlert {
+                            HStack {
+                                Text("Alert Threshold")
+                                    .font(.body)
+                                Spacer()
+                                Picker("", selection: $lowBatteryThreshold) {
+                                    Text("10%").tag(10)
+                                    Text("15%").tag(15)
+                                    Text("20%").tag(20)
+                                    Text("30%").tag(30)
+                                }
+                                .pickerStyle(.segmented)
+                                .labelsHidden()
+                                .frame(width: 180)
+                            }
+                            .padding(.leading, 16)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                        }
                     }
                     .padding(8)
                 }

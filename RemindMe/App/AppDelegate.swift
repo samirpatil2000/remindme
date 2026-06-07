@@ -185,6 +185,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             self?.handleBatteryStateChange(state)
         }
         batteryManager.startMonitoring()
+        evaluateBatteryState()
         
         // Listen for settings change via user defaults
         NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in

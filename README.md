@@ -23,6 +23,7 @@
 - **Ultra-lightweight** — Built with SwiftUI for modern macOS performance, minimal RAM/CPU usage.
 - **Natural Language Parsing** — Set reminders with ease using tokens like `@1m`, `@10m`, `@1h`.
 - **Dual Input Modes** — Type your time to get smart suggestions, or select custom durations directly from an elegant visual TimePicker UI.
+- **Stay Awake** — Keep your Mac awake from the Status Board with one-tap presets powered by macOS `caffeinate`.
 - **Focus Analytics** — Track your productivity with aggregate focus time and snooze counts natively in the Status Board.
 - **Global Hotkey** — Use a customizable global shortcut to instantly bring up the command window from anywhere.
 - **Todoist-inspired Design** — Clean, functional interface, beautiful hover-reveal UI for completed tasks, and elegant popovers.
@@ -53,7 +54,8 @@
 2. **Press ⌘⇧Space** from any app to open the Command Window.
 3. **Type your reminder** (e.g., `Call Mom @10m` or `Check the oven @5m`).
 4. **Press Enter** to set the reminder.
-5. **Receive a native notification** when the timer expires!
+5. **Open the Status Board** from the menu bar to review reminders, take a break, or start **Stay Awake** for `5m`, `10m`, `30m`, `1h`, `2h`, `4h`, or indefinitely.
+6. **Receive a native notification** when the timer expires!
 
 ---
 
@@ -135,6 +137,7 @@ RemindMe/
 │   ├── AppDelegate.swift       # App lifecycle & Carbon hotkey setup
 │   └── RemindMeApp.swift       # Swift entry point
 ├── Managers/
+│   ├── CaffeinateManager.swift # Stay Awake process lifecycle
 │   ├── HotkeyManager.swift     # Global keyboard shortcuts (Carbon API)
 │   ├── NotificationManager.swift # macOS notification delivery
 │   └── PermissionsManager.swift # Notification permissions handler

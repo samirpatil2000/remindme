@@ -9,6 +9,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     public var popupManager: PopupManager!
     public var hotkeyManager: HotkeyManager!
     public var lockOverlayController: LockOverlayController!
+    public var caffeinateManager: CaffeinateManager!
     
     private var taskTimer: Timer?
     
@@ -24,7 +25,8 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         
         taskStore = TaskStore()
         popupManager = PopupManager(taskStore: taskStore)
-        menuBarController = MenuBarController(taskStore: taskStore)
+        caffeinateManager = CaffeinateManager()
+        menuBarController = MenuBarController(taskStore: taskStore, caffeinateManager: caffeinateManager)
         commandWindowController = CommandWindowController()
         hotkeyManager = HotkeyManager()
         lockOverlayController = LockOverlayController()
@@ -106,6 +108,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     public func applicationWillTerminate(_ notification: Notification) {
+        caffeinateManager.stop()
         hotkeyManager.unregister()
     }
     

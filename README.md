@@ -106,6 +106,13 @@
       <sup>it fires. mark done, extend, or snooze.</sup>
     </td>
   </tr>
+  <tr>
+        <td rowspan="4" valign="top">
+    <img width="412" height="185" alt="image-0001" src="https://github.com/user-attachments/assets/90037b35-11b7-4b4b-b41e-7b5f355b3b4d" />
+    <br/>
+      <sup>Battery Alert</sup>
+    </td>
+  </tr>
 </table>
 
 ## 🛠️ Building from Source

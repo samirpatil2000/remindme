@@ -15,6 +15,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     private var taskTimer: Timer?
     private var lastAlertedBatteryPercentage: Int?
     private var lastUsedNotificationStyle: Bool = false
+    private var lastUsedThreshold: Int = 10
     
     // Default to popup style unless user sets to true in settings
     private var useSystemNotifications: Bool {
@@ -23,6 +24,11 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var enableLowBatteryAlert: Bool {
         UserDefaults.standard.bool(forKey: "enableLowBatteryAlert")
+    }
+    
+    private var lowBatteryThreshold: Int {
+        let val = UserDefaults.standard.integer(forKey: "lowBatteryThreshold")
+        return val == 0 ? 10 : val
     }
     
     public func applicationDidFinishLaunching(_ notification: Notification) {
@@ -173,6 +179,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func setupBatteryMonitoring() {
         lastUsedNotificationStyle = useSystemNotifications
+        lastUsedThreshold = lowBatteryThreshold
         
         batteryManager.onBatteryStateChanged = { [weak self] state in
             self?.handleBatteryStateChange(state)
@@ -184,8 +191,10 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
                 let currentStyle = self.useSystemNotifications
-                if currentStyle != self.lastUsedNotificationStyle {
+                let currentThreshold = self.lowBatteryThreshold
+                if currentStyle != self.lastUsedNotificationStyle || currentThreshold != self.lastUsedThreshold {
                     self.lastUsedNotificationStyle = currentStyle
+                    self.lastUsedThreshold = currentThreshold
                     self.lastAlertedBatteryPercentage = nil
                 }
                 self.evaluateBatteryState()
@@ -211,7 +220,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         
-        if state.percentage < 10 {
+        if state.percentage < lowBatteryThreshold {
             let shouldAlert: Bool
             if let last = lastAlertedBatteryPercentage {
                 shouldAlert = state.percentage < last

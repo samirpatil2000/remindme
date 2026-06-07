@@ -36,7 +36,6 @@ public final class BatteryManager: ObservableObject {
             CFRunLoopAddSource(CFRunLoopGetMain(), source, CFRunLoopMode.commonModes)
         }
         
-        // Initial query to populate state
         powerSourcesChanged()
     }
     

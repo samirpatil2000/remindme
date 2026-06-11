@@ -49,7 +49,7 @@
 1. Download the `.dmg` corresponding to your Mac's processor (Apple Silicon or Intel) from the latest release.
 2. Drag **RemindMe.app** to your **Applications** folder.
 3. Launch it (lives in your menu bar).
-4. **Note (not yet notarized)**: Right-click → Open → confirm in security dialog.
+4. **Note (Notarized)**: The app is signed and notarized by Apple, so it will open directly without security prompts.
 
 ---
 

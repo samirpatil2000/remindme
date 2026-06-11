@@ -120,6 +120,12 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         batteryManager = BatteryManager()
         setupBatteryMonitoring()
         startTaskTimer()
+        
+        UpdateService.shared.checkIfJustUpdated()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            UpdateService.shared.checkOnLaunchIfNeeded()
+        }
     }
     
     public func applicationWillTerminate(_ notification: Notification) {

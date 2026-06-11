@@ -7,30 +7,41 @@ source .env
 set +a
 
 BUILD_DIR="build"
-APP_DIR="${BUILD_DIR}/${APP_NAME}.app"
-DMG_DIR="dmg"
-DMG_NAME="${APP_NAME}_Release.dmg"
 
 echo "🧹 Cleaning..."
-rm -rf build dmg "${DMG_NAME}"
+rm -rf build dmg_* ${APP_NAME}_*.dmg ${APP_NAME}_*.zip
 
-mkdir -p "${APP_DIR}/Contents/MacOS"
-mkdir -p "${APP_DIR}/Contents/Resources"
+mkdir -p ${BUILD_DIR}
 
-echo "🔨 Building Swift package..."
-swift build -c release --product "${APP_NAME}"
+echo "🔨 Compiling Swift package for arm64 (Apple Silicon)..."
+swift build -c release --product "${APP_NAME}" --arch arm64
 
-BIN_PATH="$(find .build -type f -path "*/release/${APP_NAME}" | head -n 1)"
-if [[ -z "${BIN_PATH}" ]]; then
-  echo "❌ Could not locate built binary for ${APP_NAME}."
-  exit 1
-fi
+echo "🔨 Compiling Swift package for x86_64 (Intel)..."
+swift build -c release --product "${APP_NAME}" --arch x86_64
 
-cp "${BIN_PATH}" "${APP_DIR}/Contents/MacOS/${APP_NAME}"
-chmod +x "${APP_DIR}/Contents/MacOS/${APP_NAME}"
-
-echo "📋 Creating Info.plist..."
-cat > "${APP_DIR}/Contents/Info.plist" <<EOF
+package_app() {
+    local ARCH_BIN=$1
+    local SUFFIX=$2
+    
+    echo ""
+    echo "======================================"
+    echo "🚀 Packaging ${APP_NAME} for ${SUFFIX}..."
+    echo "======================================"
+    
+    local ARCH_BUILD_DIR="${BUILD_DIR}/${SUFFIX}"
+    local APP_DIR="${ARCH_BUILD_DIR}/${APP_NAME}.app"
+    local DMG_DIR="dmg_${SUFFIX}"
+    local DMG_NAME="${APP_NAME}_${SUFFIX}.dmg"
+    
+    mkdir -p ${ARCH_BUILD_DIR}
+    mkdir -p ${APP_DIR}/Contents/MacOS
+    mkdir -p ${APP_DIR}/Contents/Resources
+    
+    cp ${ARCH_BIN} ${APP_DIR}/Contents/MacOS/${APP_NAME}
+    chmod +x ${APP_DIR}/Contents/MacOS/${APP_NAME}
+    
+    echo "📋 Creating Info.plist..."
+    cat > ${APP_DIR}/Contents/Info.plist <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -65,60 +76,82 @@ cat > "${APP_DIR}/Contents/Info.plist" <<EOF
 </plist>
 EOF
 
-echo "🎨 Building assets..."
-xcrun actool Assets.xcassets \
-  --compile "${APP_DIR}/Contents/Resources" \
-  --platform macosx \
-  --minimum-deployment-target "${DEPLOY_TARGET}" \
-  --app-icon AppIcon \
-  --output-partial-info-plist "${BUILD_DIR}/partial.plist" >/dev/null 2>&1
+    echo "🎨 Building assets..."
+    xcrun actool Assets.xcassets \
+    --compile ${APP_DIR}/Contents/Resources \
+    --platform macosx \
+    --minimum-deployment-target ${DEPLOY_TARGET} \
+    --app-icon AppIcon \
+    --output-partial-info-plist ${BUILD_DIR}/partial_${SUFFIX}.plist >/dev/null 2>&1
 
-echo "📦 Creating PkgInfo..."
-echo "APPL????" > "${APP_DIR}/Contents/PkgInfo"
+    echo "📦 Creating PkgInfo..."
+    echo "APPL????" > ${APP_DIR}/Contents/PkgInfo
 
-echo "🔏 Signing..."
-codesign \
-  --force \
-  --deep \
-  --timestamp \
-  --options runtime \
-  --sign "${SIGN_IDENTITY}" \
-  --entitlements RemindMe.entitlements \
-  "${APP_DIR}"
+    echo "🔏 Signing..."
+    SIGN_OK=false
+    for attempt in 1 2 3; do
+        if codesign \
+            --force \
+            --deep \
+            --timestamp \
+            --options runtime \
+            --sign "${SIGN_IDENTITY}" \
+            --entitlements RemindMe.entitlements \
+            ${APP_DIR}; then
+            SIGN_OK=true
+            break
+        fi
+        echo "⚠️  Signing attempt ${attempt} failed (timestamp server unreachable?), retrying in 3s..."
+        sleep 3
+    done
+    if [ "$SIGN_OK" = false ]; then
+        echo "❌ Signing failed after 3 attempts."
+        exit 1
+    fi
 
-echo "🔍 Verifying..."
-codesign --verify --deep --strict "${APP_DIR}"
+    echo "🔍 Verifying..."
+    codesign --verify --deep --strict ${APP_DIR}
 
-echo "📂 Preparing DMG..."
-mkdir -p "${DMG_DIR}"
-cp -R "${APP_DIR}" "${DMG_DIR}/"
-ln -s /Applications "${DMG_DIR}/Applications"
+    echo "🗜️ Creating ZIP..."
+    local ZIP_NAME="${APP_NAME}_${SUFFIX}.zip"
+    ditto -ck --rsrc --sequesterRsrc --keepParent ${APP_DIR} ${ZIP_NAME}
+    echo "✅ ZIP: ${ZIP_NAME}"
 
-echo "💿 Creating DMG..."
-hdiutil create \
-  -volname "${APP_NAME}" \
-  -srcfolder "${DMG_DIR}" \
-  -ov \
-  -format UDZO \
-  "${DMG_NAME}"
+    echo "📂 Preparing DMG..."
+    mkdir -p ${DMG_DIR}
+    cp -R ${APP_DIR} ${DMG_DIR}/
+    ln -s /Applications ${DMG_DIR}/Applications
 
-echo "🔏 Signing DMG..."
-codesign \
-  --force \
-  --sign "${SIGN_IDENTITY}" \
-  "${DMG_NAME}"
+    echo "💿 Creating DMG..."
+    hdiutil create \
+    -volname "${APP_NAME} ${SUFFIX}" \
+    -srcfolder ${DMG_DIR} \
+    -ov \
+    -format UDZO \
+    ${DMG_NAME}
 
-echo "📤 Notarizing DMG..."
-xcrun notarytool submit "${DMG_NAME}" \
-  --keychain-profile "${NOTARY_PROFILE}" \
-  --wait
+    echo "🔏 Signing DMG..."
+    codesign \
+    --force \
+    --sign "${SIGN_IDENTITY}" \
+    ${DMG_NAME}
 
-echo "📎 Stapling DMG..."
-xcrun stapler staple "${DMG_NAME}"
+    echo "📤 Notarizing DMG..."
+    xcrun notarytool submit ${DMG_NAME} \
+    --keychain-profile "${NOTARY_PROFILE}" \
+    --wait
 
-echo "🧼 Cleanup..."
-rm -rf "${DMG_DIR}"
+    echo "📎 Stapling DMG..."
+    xcrun stapler staple ${DMG_NAME}
+
+    echo "🧼 Cleanup..."
+    rm -rf ${DMG_DIR}
+    
+    echo "✅ Finished ${SUFFIX}: ${DMG_NAME}"
+}
+
+package_app ".build/arm64-apple-macosx/release/RemindMe" "Silicon"
+package_app ".build/x86_64-apple-macosx/release/RemindMe" "Intel"
 
 echo ""
-echo "✅ BUILD COMPLETE"
-echo "DMG: ${DMG_NAME}"
+echo "🎉 ALL BUILDS COMPLETE"

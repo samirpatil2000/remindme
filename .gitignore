@@ -82,3 +82,8 @@ fastlane/test_output
 *.dmg
 dmg/
 .DS_Store
+*.dmg
+*.pkg
+*.app
+*.zip
+*.tar.gz

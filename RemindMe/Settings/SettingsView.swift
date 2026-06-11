@@ -84,131 +84,162 @@ public struct SettingsView: View {
     }
 
     public var body: some View {
-        Form {
-            Section(header: Text("General")) {
-                GroupBox(label: Text("GENERAL").font(.caption2).foregroundStyle(.secondary)) {
-                    VStack(alignment: .leading, spacing: 12) {
+        VStack(spacing: 12) {
+            Form {
+                Section(header: Text("General")) {
+                    GroupBox(label: Text("GENERAL").font(.caption2).foregroundStyle(.secondary)) {
+                        VStack(alignment: .leading, spacing: 12) {
 
-                        // MARK: Shortcut row
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack(spacing: 12) {
-                                Text("Global hotkey")
+                            // MARK: Shortcut row
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(spacing: 12) {
+                                    Text("Global hotkey")
 
+                                    Spacer()
+
+                                    // Key badges
+                                    HStack(spacing: 4) {
+                                        let parts = currentShortcut.displayString.split(separator: " ")
+                                        ForEach(0..<parts.count, id: \.self) { i in
+                                            Text(String(parts[i]))
+                                                .font(.system(size: 13, weight: .medium, design: .monospaced))
+                                                .padding(.horizontal, 8)
+                                                .padding(.vertical, 5)
+                                                .background(
+                                                    isRecording
+                                                        ? Color.accentColor.opacity(0.15)
+                                                        : Color(NSColor.controlBackgroundColor)
+                                                )
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 6)
+                                                        .stroke(
+                                                            isRecording ? Color.accentColor : Color.gray.opacity(0.3),
+                                                            lineWidth: 1
+                                                        )
+                                                )
+                                                .cornerRadius(6)
+                                        }
+                                    }
+
+                                    Button(isRecording ? "Cancel" : "Change") {
+                                        isRecording.toggle()
+                                    }
+                                    .buttonStyle(.bordered)
+                                }
+
+                                if isRecording {
+                                    Text("Press your new shortcut…")
+                                        .font(.caption)
+                                        .foregroundStyle(Color.accentColor)
+                                        .transition(.opacity)
+                                }
+                            }
+                            .animation(.easeInOut(duration: 0.15), value: isRecording)
+                            .onChange(of: isRecording) { _, recording in
+                                NotificationCenter.default.post(
+                                    name: recording
+                                        ? Notification.Name("HotkeyRecordingBegan")
+                                        : Notification.Name("HotkeyRecordingEnded"),
+                                    object: nil
+                                )
+                            }
+
+                            Divider()
+
+                            // MARK: Default duration
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Default reminder duration")
+                                        .font(.body)
+                                    Text("\(defaultMinutes) minutes")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                                 Spacer()
+                                Stepper("", value: $defaultMinutes, in: 1...120)
+                                    .labelsHidden()
+                            }
 
-                                // Key badges
-                                HStack(spacing: 4) {
-                                    let parts = currentShortcut.displayString.split(separator: " ")
-                                    ForEach(0..<parts.count, id: \.self) { i in
-                                        Text(String(parts[i]))
-                                            .font(.system(size: 13, weight: .medium, design: .monospaced))
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 5)
-                                            .background(
-                                                isRecording
-                                                    ? Color.accentColor.opacity(0.15)
-                                                    : Color(NSColor.controlBackgroundColor)
-                                            )
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 6)
-                                                    .stroke(
-                                                        isRecording ? Color.accentColor : Color.gray.opacity(0.3),
-                                                        lineWidth: 1
-                                                    )
-                                            )
-                                            .cornerRadius(6)
+                            Divider()
+
+                            // MARK: Launch at Login
+                            Toggle("Launch at Login", isOn: Binding(get: {
+                                SMAppService.mainApp.status == .enabled
+                            }, set: { newValue in
+                                if newValue {
+                                    try? SMAppService.mainApp.register()
+                                } else {
+                                    try? SMAppService.mainApp.unregister()
+                                }
+                            }))
+
+                            Toggle("Use System Notifications", isOn: $useSystemNotifications)
+                            
+                            Toggle("Include Pre-release Updates", isOn: $includePrereleases)
+                                .onChange(of: includePrereleases) { _, newValue in
+                                    if newValue {
+                                        UpdateService.shared.checkForUpdates(silent: true)
                                     }
                                 }
-
-                                Button(isRecording ? "Cancel" : "Change") {
-                                    isRecording.toggle()
+                            
+                            Toggle("Low Battery Alert", isOn: $enableLowBatteryAlert.animation(.easeInOut(duration: 0.2)))
+                            
+                            if enableLowBatteryAlert {
+                                HStack {
+                                    Text("Alert Threshold")
+                                        .font(.body)
+                                    Spacer()
+                                    Picker("", selection: $lowBatteryThreshold) {
+                                        Text("10%").tag(10)
+                                        Text("15%").tag(15)
+                                        Text("20%").tag(20)
+                                        Text("30%").tag(30)
+                                    }
+                                    .pickerStyle(.segmented)
+                                    .labelsHidden()
+                                    .frame(width: 180)
                                 }
-                                .buttonStyle(.bordered)
-                            }
-
-                            if isRecording {
-                                Text("Press your new shortcut…")
-                                    .font(.caption)
-                                    .foregroundStyle(Color.accentColor)
-                                    .transition(.opacity)
+                                .padding(.leading, 16)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
                             }
                         }
-                        .animation(.easeInOut(duration: 0.15), value: isRecording)
-                        .onChange(of: isRecording) { _, recording in
-                            NotificationCenter.default.post(
-                                name: recording
-                                    ? Notification.Name("HotkeyRecordingBegan")
-                                    : Notification.Name("HotkeyRecordingEnded"),
-                                object: nil
-                            )
-                        }
-
-                        Divider()
-
-                        // MARK: Default duration
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Default reminder duration")
-                                    .font(.body)
-                                Text("\(defaultMinutes) minutes")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Stepper("", value: $defaultMinutes, in: 1...120)
-                                .labelsHidden()
-                        }
-
-                        Divider()
-
-                        // MARK: Launch at Login
-                        Toggle("Launch at Login", isOn: Binding(get: {
-                            SMAppService.mainApp.status == .enabled
-                        }, set: { newValue in
-                            if newValue {
-                                try? SMAppService.mainApp.register()
-                            } else {
-                                try? SMAppService.mainApp.unregister()
-                            }
-                        }))
-
-                        Toggle("Use System Notifications", isOn: $useSystemNotifications)
-                        
-                        Toggle("Include Pre-release Updates", isOn: $includePrereleases)
-                            .onChange(of: includePrereleases) { _, newValue in
-                                if newValue {
-                                    UpdateService.shared.checkForUpdates(silent: true)
-                                }
-                            }
-                        
-                        Toggle("Low Battery Alert", isOn: $enableLowBatteryAlert.animation(.easeInOut(duration: 0.2)))
-                        
-                        if enableLowBatteryAlert {
-                            HStack {
-                                Text("Alert Threshold")
-                                    .font(.body)
-                                Spacer()
-                                Picker("", selection: $lowBatteryThreshold) {
-                                    Text("10%").tag(10)
-                                    Text("15%").tag(15)
-                                    Text("20%").tag(20)
-                                    Text("30%").tag(30)
-                                }
-                                .pickerStyle(.segmented)
-                                .labelsHidden()
-                                .frame(width: 180)
-                            }
-                            .padding(.leading, 16)
-                            .transition(.opacity.combined(with: .move(edge: .top)))
-                        }
+                        .padding(8)
                     }
-                    .padding(8)
                 }
             }
-            .padding(.bottom)
+            
+            Divider()
+                .padding(.horizontal)
+            
+            // About Section (matching Buffer exactly)
+            VStack(spacing: 6) {
+                Text("Designed to disappear. Built to remind.")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .italic()
+
+                Text("RemindMe \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") · by @samirpatil2000")
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary.opacity(0.4))
+
+                HStack(spacing: 8) {
+                    Link("⭐ Star on GitHub", destination: URL(string: "https://github.com/samirpatil2000/remindme")!)
+                        .font(.system(size: 10, weight: .medium))
+
+                    Text("·")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary.opacity(0.4))
+
+                    Link("Report an Issue", destination: URL(string: "https://github.com/samirpatil2000/remindme/issues/new")!)
+                        .font(.system(size: 10, weight: .medium))
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
+            .padding(.bottom, 12)
         }
         .padding()
-        .frame(width: 520, height: 360)
+        .frame(width: 520, height: 445)
         // Buffer pattern: invisible KeyRecorder as .background() on the entire view
         .background(
             ShortcutRecorder(isRecording: $isRecording) { newShortcut in

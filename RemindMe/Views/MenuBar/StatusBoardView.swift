@@ -2,6 +2,7 @@ import SwiftUI
 import AppKit
 
 public struct StatusBoardView: View {
+    @Environment(\.openSettings) private var openSettings
     @ObservedObject var taskStore: TaskStore
     @ObservedObject var caffeinateManager: CaffeinateManager
     @State private var showCompleted = false
@@ -174,6 +175,10 @@ public struct StatusBoardView: View {
             }
         }
         .frame(width: 340, height: activeAndPastDueTasks.isEmpty && taskStore.completedToday == 0 ? 290 : 400, alignment: .top)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OpenSettingsWindow"))) { _ in
+            NSApp.activate(ignoringOtherApps: true)
+            openSettings()
+        }
     }
     
     private var headerView: some View {

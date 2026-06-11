@@ -38,8 +38,7 @@ public class MenuBarController {
     }
 
     @objc private func openSettingsFromMenu() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-        NSApp.activate(ignoringOtherApps: true)
+        NotificationCenter.default.post(name: NSNotification.Name("OpenSettingsWindow"), object: nil)
     }
 
     @objc private func checkForUpdatesFromMenu() {

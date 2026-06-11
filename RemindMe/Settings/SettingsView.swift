@@ -74,6 +74,7 @@ public struct SettingsView: View {
     @AppStorage("useSystemNotifications") private var useSystemNotifications = false
     @AppStorage("enableLowBatteryAlert") private var enableLowBatteryAlert = false
     @AppStorage("lowBatteryThreshold") private var lowBatteryThreshold = 10
+    @AppStorage("includePrereleases") private var includePrereleases = false
 
     @Binding public var currentShortcut: Shortcut
     @State private var isRecording = false
@@ -172,6 +173,13 @@ public struct SettingsView: View {
                         }))
 
                         Toggle("Use System Notifications", isOn: $useSystemNotifications)
+                        
+                        Toggle("Include Pre-release Updates", isOn: $includePrereleases)
+                            .onChange(of: includePrereleases) { _, newValue in
+                                if newValue {
+                                    UpdateService.shared.checkForUpdates(silent: true)
+                                }
+                            }
                         
                         Toggle("Low Battery Alert", isOn: $enableLowBatteryAlert.animation(.easeInOut(duration: 0.2)))
                         

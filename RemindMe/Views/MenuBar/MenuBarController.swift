@@ -42,6 +42,10 @@ public class MenuBarController {
         NSApp.activate(ignoringOtherApps: true)
     }
 
+    @objc private func checkForUpdatesFromMenu() {
+        UpdateService.shared.checkForUpdates(silent: false)
+    }
+
     @objc private func togglePopover(_ sender: AnyObject?) {
         if let event = NSApp.currentEvent, event.type == .rightMouseUp || event.modifierFlags.contains(.control) {
             let menu = NSMenu()
@@ -50,6 +54,8 @@ public class MenuBarController {
             menu.addItem(withTitle: "New Reminder", action: #selector(showCommandWindowFromMenu), keyEquivalent: "n")
             menu.items.last?.target = self
             menu.addItem(withTitle: "Settings...", action: #selector(openSettingsFromMenu), keyEquivalent: ",")
+            menu.items.last?.target = self
+            menu.addItem(withTitle: "Check for Updates...", action: #selector(checkForUpdatesFromMenu), keyEquivalent: "")
             menu.items.last?.target = self
             menu.addItem(NSMenuItem.separator())
             menu.addItem(withTitle: "Quit RemindMe", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")

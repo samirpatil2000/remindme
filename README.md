@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/samirpatil2000/remindme/releases/latest">
-    <img src="https://img.shields.io/badge/Download-v1.0-blue?style=for-the-badge&logo=apple" alt="Download">
+    <img src="https://img.shields.io/badge/Download-v2.0-blue?style=for-the-badge&logo=apple" alt="Download">
   </a>
   <img src="https://img.shields.io/badge/macOS-15.0+-black?style=for-the-badge&logo=apple" alt="macOS 15+">
   <img src="https://img.shields.io/badge/Swift-6.0-orange?style=for-the-badge&logo=swift" alt="Swift 6.0">
@@ -37,12 +37,16 @@
 ### 📥 Download
 
 <p align="center">
-  <a href="https://github.com/samirpatil2000/remindme/releases/download/v1.0/RemindMe_Release.dmg">
-    <img src="https://img.shields.io/badge/⬇️_Download_RemindMe.dmg-1.0-2ea44f?style=for-the-badge" alt="Download RemindMe.dmg">
+  <a href="https://github.com/samirpatil2000/remindme/releases/download/v2.0/RemindMe_Silicon.dmg">
+    <img src="https://img.shields.io/badge/⬇️_Download_Apple_Silicon-v2.0-2ea44f?style=for-the-badge" alt="Download RemindMe Apple Silicon">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/samirpatil2000/remindme/releases/download/v2.0/RemindMe_Intel.dmg">
+    <img src="https://img.shields.io/badge/⬇️_Download_Intel-v2.0-grey?style=for-the-badge" alt="Download RemindMe Intel">
   </a>
 </p>
 
-1. Download the `.dmg` from the latest release.
+1. Download the `.dmg` corresponding to your Mac's processor (Apple Silicon or Intel) from the latest release.
 2. Drag **RemindMe.app** to your **Applications** folder.
 3. Launch it (lives in your menu bar).
 4. **Note (not yet notarized)**: Right-click → Open → confirm in security dialog.

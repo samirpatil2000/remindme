@@ -67,6 +67,10 @@ public struct LockOverlayView: View {
                     let progress = remaining / duration
                     let secondsInt = Int(ceil(remaining))
                     
+                    let minutes = secondsInt / 60
+                    let seconds = secondsInt % 60
+                    let timeString = String(format: "%d:%02d", minutes, seconds)
+                    
                     VStack(spacing: 48) {
                         // Circular countdown ring
                         ZStack {
@@ -81,9 +85,11 @@ public struct LockOverlayView: View {
                                 .rotationEffect(.degrees(-90))
                                 .animation(.linear(duration: 1.0), value: progress)
                             
-                            Text("\(secondsInt)")
+                            Text(timeString)
                                 .font(.system(size: 36, weight: .medium, design: .rounded))
                                 .foregroundColor(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                         }
                         
                         // Messages group

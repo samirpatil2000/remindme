@@ -75,6 +75,10 @@ public struct SettingsView: View {
     @AppStorage("enableLowBatteryAlert") private var enableLowBatteryAlert = false
     @AppStorage("lowBatteryThreshold") private var lowBatteryThreshold = 10
     @AppStorage("includePrereleases") private var includePrereleases = false
+    
+    @AppStorage("enablePeriodicBreaks") private var enablePeriodicBreaks = false
+    @AppStorage("periodicBreakInterval") private var periodicBreakInterval = 25
+    @AppStorage("periodicBreakDuration") private var periodicBreakDuration = 30
 
     @Binding public var currentShortcut: Shortcut
     @State private var isRecording = false
@@ -206,6 +210,56 @@ public struct SettingsView: View {
                         .padding(8)
                     }
                 }
+                
+                Section(header: Text("Periodic Breaks")) {
+                    GroupBox(label: Text("EYE & FOCUS BREAKS").font(.caption2).foregroundStyle(.secondary)) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Toggle("Enable Periodic Break Reminders", isOn: $enablePeriodicBreaks.animation(.easeInOut(duration: 0.2)))
+                            
+                            if enablePeriodicBreaks {
+                                HStack {
+                                    Text("Break Interval")
+                                        .font(.body)
+                                    Spacer()
+                                    Picker("", selection: $periodicBreakInterval) {
+                                        Text("20m").tag(20)
+                                        Text("25m").tag(25)
+                                        Text("30m").tag(30)
+                                        Text("45m").tag(45)
+                                        Text("60m").tag(60)
+                                    }
+                                    .pickerStyle(.segmented)
+                                    .labelsHidden()
+                                    .frame(width: 220)
+                                }
+                                .padding(.leading, 16)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                                
+                                Divider()
+                                    .padding(.leading, 16)
+                                
+                                HStack {
+                                    Text("Break Duration")
+                                        .font(.body)
+                                    Spacer()
+                                    Picker("", selection: $periodicBreakDuration) {
+                                        Text("20s").tag(20)
+                                        Text("30s").tag(30)
+                                        Text("1m").tag(60)
+                                        Text("2m").tag(120)
+                                        Text("5m").tag(300)
+                                    }
+                                    .pickerStyle(.segmented)
+                                    .labelsHidden()
+                                    .frame(width: 220)
+                                }
+                                .padding(.leading, 16)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
+                        }
+                        .padding(8)
+                    }
+                }
             }
             
             Divider()
@@ -239,8 +293,7 @@ public struct SettingsView: View {
             .padding(.bottom, 12)
         }
         .padding()
-        .frame(width: 520, height: 445)
-        // Buffer pattern: invisible KeyRecorder as .background() on the entire view
+        .frame(width: 520, height: 580)
         .background(
             ShortcutRecorder(isRecording: $isRecording) { newShortcut in
                 currentShortcut = newShortcut

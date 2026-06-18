@@ -23,7 +23,8 @@
 - **Ultra-lightweight** — Built with SwiftUI for modern macOS performance, minimal RAM/CPU usage.
 - **Natural Language Parsing** — Set reminders with ease using tokens like `@1m`, `@10m`, `@1h`.
 - **Dual Input Modes** — Type your time to get smart suggestions, or select custom durations directly from an elegant visual TimePicker UI.
-- **Stay Awake** — Keep your Mac awake from the Status Board with one-tap presets powered by macOS `caffeinate`.
+- **Stay Awake** — Keep your Mac awake from the Status Board using native macOS power assertions (with options to keep screen awake, or stay awake when laptop lid closes).
+- **Periodic Breaks** — Build healthy work habits with automated periodic focus/eye breaks showing a custom Sinclair/Cos-animated countdown overlay.
 - **Low Battery Alert** — Get notified when the MacBook battery drops below a customizable threshold (10%, 15%, 20%, 30%) on battery power, automatically updating with each 1% drop and stopping once plugged in.
 - **Focus Analytics** — Track your productivity with aggregate focus time and snooze counts natively in the Status Board.
 - **Global Hotkey** — Use a customizable global shortcut to instantly bring up the command window from anywhere.

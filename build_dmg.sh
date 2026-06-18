@@ -63,7 +63,7 @@ package_app() {
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
-  <string>2.2.0-beta.1</string>
+  <string>2.2.0</string>
   <key>CFBundleVersion</key>
   <string>5</string>
   <key>LSMinimumSystemVersion</key>

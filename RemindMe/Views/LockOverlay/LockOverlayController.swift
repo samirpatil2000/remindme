@@ -120,6 +120,7 @@ public final class LockOverlayController: NSObject {
                     panel.orderOut(nil)
                 }
                 self.onDismiss?()
+                NotificationCenter.default.post(name: NSNotification.Name("LockOverlayDismissed"), object: nil)
             }
         }
     }

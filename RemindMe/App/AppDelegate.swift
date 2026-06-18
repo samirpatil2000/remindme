@@ -11,6 +11,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
     public var lockOverlayController: LockOverlayController!
     public var caffeinateManager: CaffeinateManager!
     public var batteryManager: BatteryManager!
+    public var breakManager: BreakManager!
     
     private var taskTimer: Timer?
     private var lastAlertedBatteryPercentage: Int?
@@ -43,6 +44,7 @@ public class AppDelegate: NSObject, NSApplicationDelegate {
         commandWindowController = CommandWindowController()
         hotkeyManager = HotkeyManager()
         lockOverlayController = LockOverlayController()
+        breakManager = BreakManager(appDelegate: self)
         
         commandWindowController.onParseText = { [weak self] text, duration in
             self?.handleCommand(text, duration: duration)

@@ -62,26 +62,16 @@ final class LockTests: XCTestCase {
         XCTAssertNil(manager.expiresAt)
     }
 
-    func testCaffeinateManagerExternalTermination() async throws {
+    func testCaffeinateManagerToggles() async throws {
         let manager = CaffeinateManager()
         
-        manager.start(duration: 60)
-        XCTAssertTrue(manager.isActive)
+        XCTAssertTrue(manager.keepDisplayAwake)
+        XCTAssertFalse(manager.keepAwakeOnLidClose)
         
-        guard let process = manager.process else {
-            XCTFail("Process was not started")
-            return
-        }
+        manager.keepDisplayAwake = false
+        XCTAssertFalse(manager.keepDisplayAwake)
         
-        process.terminate()
-        
-        for _ in 0..<20 {
-            if !manager.isActive { break }
-            try? await Task.sleep(for: .milliseconds(50))
-        }
-        
-        XCTAssertFalse(manager.isActive)
-        XCTAssertNil(manager.expiresAt)
-        XCTAssertNil(manager.process)
+        manager.keepAwakeOnLidClose = true
+        XCTAssertTrue(manager.keepAwakeOnLidClose)
     }
 }

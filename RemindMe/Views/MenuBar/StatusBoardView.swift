@@ -311,6 +311,65 @@ private struct StayAwakeSectionView: View {
                         }
                     }
                 }
+                
+                HStack(spacing: 12) {
+                    // Toggle for Display Awake
+                    Button(action: {
+                        caffeinateManager.keepDisplayAwake.toggle()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: caffeinateManager.keepDisplayAwake ? "sun.max.fill" : "sun.max")
+                            Text("Screen On")
+                        }
+                        .font(.system(size: 11, design: .rounded))
+                        .foregroundColor(caffeinateManager.keepDisplayAwake ? .primary : .secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule().fill(caffeinateManager.keepDisplayAwake ? Color.accentColor.opacity(0.15) : Color.primary.opacity(0.03))
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    
+                    // Toggle for Lid Close (Stay Awake)
+                    Button(action: {
+                        if !caffeinateManager.isLidSleepAuthorized {
+                            let alert = NSAlert()
+                            alert.messageText = "Stay Awake on Lid Close"
+                            alert.informativeText = "Keeping your Mac awake with the lid closed can cause heat build-up. Ensure your laptop is on a hard surface with proper airflow.\n\nFirst-time setup will request admin privileges."
+                            alert.addButton(withTitle: "Proceed")
+                            alert.addButton(withTitle: "Cancel")
+                            if alert.runModal() == .alertFirstButtonReturn {
+                                if caffeinateManager.authorizeLidSleep() {
+                                    caffeinateManager.keepAwakeOnLidClose.toggle()
+                                }
+                            }
+                        } else {
+                            if !caffeinateManager.keepAwakeOnLidClose {
+                                let alert = NSAlert()
+                                alert.messageText = "Heat Warning"
+                                alert.informativeText = "Keep your Mac on a hard surface with airflow. Ensure it has room to breathe."
+                                alert.addButton(withTitle: "OK")
+                                alert.runModal()
+                            }
+                            caffeinateManager.keepAwakeOnLidClose.toggle()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "laptopcomputer")
+                            Text("Lid Close Mode")
+                        }
+                        .font(.system(size: 11, design: .rounded))
+                        .foregroundColor(caffeinateManager.keepAwakeOnLidClose ? .primary : .secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule().fill(caffeinateManager.keepAwakeOnLidClose ? Color.green.opacity(0.15) : Color.primary.opacity(0.03))
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.top, 2)
             }
         }
     }

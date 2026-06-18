@@ -71,7 +71,7 @@ public struct LockOverlayView: View {
                     let seconds = secondsInt % 60
                     let timeString = String(format: "%d:%02d", minutes, seconds)
                     
-                    VStack(spacing: 48) {
+                    VStack(spacing: 40) {
                         // Circular countdown ring
                         ZStack {
                             Circle()
@@ -91,6 +91,9 @@ public struct LockOverlayView: View {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                         }
+                        
+                        // Sinclair/Cos-animated look-away eyes
+                        LookAwayEyesView(phase: elapsed * 1.5)
                         
                         // Messages group
                         VStack(spacing: 16) {
@@ -146,11 +149,9 @@ public struct LockOverlayView: View {
     
     private func handleEscapePress() {
         if escPressedOnce {
-            // Second Escape: dismiss without break increment
             escTimerTask?.cancel()
             onEscape()
         } else {
-            // First Escape: show hint and set a 2-second timeout
             withAnimation(.easeIn(duration: 0.2)) {
                 escPressedOnce = true
             }
@@ -162,6 +163,55 @@ public struct LockOverlayView: View {
                     escPressedOnce = false
                 }
             }
+        }
+    }
+}
+
+// MARK: - LookAwayEyesView
+
+struct LookAwayEyesView: View {
+    let phase: Double
+    
+    var body: some View {
+        HStack(spacing: 20) {
+            EyeView(pupilOffset: pupilOffset)
+            EyeView(pupilOffset: pupilOffset)
+        }
+    }
+    
+    private var pupilOffset: CGSize {
+        let x = sin(phase) * 10
+        let y = cos(phase * 0.72) * 5
+        return CGSize(width: x, height: y)
+    }
+}
+
+struct EyeView: View {
+    let pupilOffset: CGSize
+    
+    var body: some View {
+        ZStack {
+            Ellipse()
+                .fill(Color.white.opacity(0.92))
+                .frame(width: 76, height: 54)
+                .overlay(
+                    Ellipse()
+                        .stroke(Color.white.opacity(0.22), lineWidth: 1.5)
+                )
+            
+            // Pupil
+            ZStack {
+                Circle()
+                    .fill(Color(white: 0.05).opacity(0.96))
+                    .frame(width: 22, height: 22)
+                
+                // Glint
+                Circle()
+                    .fill(Color.white.opacity(0.78))
+                    .frame(width: 5, height: 5)
+                    .offset(x: -3, y: -3)
+            }
+            .offset(pupilOffset)
         }
     }
 }

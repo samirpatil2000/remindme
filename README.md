@@ -116,7 +116,15 @@
       <sup>it fires. mark done, extend, or snooze.</sup>
     </td>
   </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/e3dee24b-aad8-4675-81a8-e0aa90b1b3d3" alt="Actionable Reminder Notification with Snooze Options" width="400"/>
+      <br/>
+      <sup>Run with lip closed</sup>
+    </td>
+  </tr>
 </table>
+
 
 ## 🛠️ Building from Source
 
